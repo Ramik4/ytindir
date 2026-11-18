@@ -691,4 +691,6 @@
     <string name="update_checked_ago">Diperiksa %1$s</string>
     <string name="update_checked_just_now">Baru saja diperiksa</string>
     <string name="update_not_checked_yet">Masih belum diperiksa</string>
+    <string name="auto_update_gallery_dl">Perbarui gallery-dl secara otomatis</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl mengunduh gambar dan galeri. Situs sering berubah, jadi memperbaruinya membuat unduhan gambar tetap berfungsi. Data diambil dari PyPI (stabil) atau repositori GitHub gallery-dl (master).</string>
 </resources>

@@ -37,6 +37,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.anggrayudi.storage.file.getAbsolutePath
+import com.deniscerri.ytdl.core.GalleryDl
 import com.deniscerri.ytdl.core.RuntimeManager
 import com.deniscerri.ytdl.database.DBManager
 import com.deniscerri.ytdl.database.enums.DownloadType
@@ -646,6 +647,16 @@ class MainActivity : BaseActivity() {
                         }
                     }
                 } catch (err: Exception) {}
+            }
+        }
+
+        // YTindir: gallery-dl updates quietly in the background, like yt-dlp
+        if (preferences.getBoolean(GalleryDl.AUTO_UPDATE_KEY, true)) {
+            CoroutineScope(SupervisorJob()).launch {
+                runCatching {
+                    val hasActiveQueuedDownloads = DBManager.getInstance(this@MainActivity).downloadDao.getDownloadsCountByStatus(listOf("Active", "Queued")) > 0
+                    if (!hasActiveQueuedDownloads) UpdateUtil(this@MainActivity).updateGalleryDl()
+                }
             }
         }
     }

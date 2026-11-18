@@ -677,4 +677,6 @@
     <string name="save_lrc_file_summary">Enregistre les paroles synchronisées en fichier .lrc à côté de l\'audio</string>
     <string name="custom_channels">Fork personnalisé</string>
     <string name="custom_channels_summary">Mettre à jour depuis vos propres dépôts yt-dlp</string>
+    <string name="auto_update_gallery_dl">Mettre à jour automatiquement gallery-dl</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl télécharge les images et les galeries. Les sites changent souvent : le garder à jour permet aux téléchargements d\'images de continuer à fonctionner. Les données proviennent de PyPI (stable) ou du dépôt GitHub de gallery-dl (master).</string>
 </resources>

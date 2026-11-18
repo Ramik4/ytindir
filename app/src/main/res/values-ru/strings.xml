@@ -777,4 +777,6 @@
     <string name="invalid_time">Неверное время</string>
     <string name="cut_preparing">Подготовка нарезки…</string>
     <string name="powered_by">Основано на</string>
+    <string name="auto_update_gallery_dl">Автообновление gallery-dl</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl скачивает изображения и галереи. Сайты часто меняются, поэтому обновления нужны, чтобы загрузка изображений продолжала работать. Данные берутся из PyPI (стабильная) или из репозитория gallery-dl на GitHub (master).</string>
 </resources>

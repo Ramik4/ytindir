@@ -38,11 +38,18 @@
         <action
             android:id="@+id/action_updateSettingsFragment_to_appUpdateSettingsFragment"
             app:destination="@id/appUpdateSettingsFragment" />
+        <action
+            android:id="@+id/action_updateSettingsFragment_to_galleryDlUpdateSettingsFragment"
+            app:destination="@id/galleryDlUpdateSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/ytdlpUpdateSettingsFragment"
         android:name="com.deniscerri.ytdl.ui.more.settings.updating.ytdlp.YtdlpUpdateSettingsFragment"
         android:label="YtdlpUpdateSettingsFragment" />
+    <fragment
+        android:id="@+id/galleryDlUpdateSettingsFragment"
+        android:name="com.deniscerri.ytdl.ui.more.settings.updating.gallerydl.GalleryDlUpdateSettingsFragment"
+        android:label="GalleryDlUpdateSettingsFragment" />
     <fragment
         android:id="@+id/appUpdateSettingsFragment"
         android:name="com.deniscerri.ytdl.ui.more.settings.updating.app.AppUpdateSettingsFragment"

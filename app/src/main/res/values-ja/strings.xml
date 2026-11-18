@@ -595,4 +595,6 @@
     <string name="save_lrc_file_summary">同期された歌詞を音声の横に .lrc ファイルとして保存します</string>
     <string name="custom_channels">カスタムフォーク</string>
     <string name="custom_channels_summary">自分の yt-dlp リリースリポジトリから更新</string>
+    <string name="auto_update_gallery_dl">gallery-dl の自動更新</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl は画像やギャラリーをダウンロードします。サイトは頻繁に変わるため、最新に保つことで画像のダウンロードが動作し続けます。アップデートは PyPI（安定版）または gallery-dl の GitHub リポジトリ（master）から取得されます。</string>
 </resources>

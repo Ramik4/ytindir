@@ -680,4 +680,6 @@
     <string name="history_quick_action_summary">Acción a realizar al hacer clic sobre el botón de acción rápida en la carta del historial</string>
     <string name="open_file">Abrir Archivo</string>
     <string name="duration">Duración</string>
+    <string name="auto_update_gallery_dl">Auto‐actualizar gallery-dl</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl descarga imágenes y galerías. Los sitios cambian a menudo, así que mantenerlo actualizado hace que las descargas de imágenes sigan funcionando. Los datos provienen de PyPI (estable) o del repositorio GitHub de gallery-dl (master).</string>
 </resources>

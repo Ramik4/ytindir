@@ -691,4 +691,6 @@
     <string name="update_checked_ago">%1$s 前检查</string>
     <string name="update_checked_just_now">刚检查过</string>
     <string name="update_not_checked_yet">还没检查过</string>
+    <string name="auto_update_gallery_dl">自动更新 gallery-dl</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl 用于下载图片和图集。网站经常变化，保持更新可确保图片下载继续正常工作。数据来自 PyPI（稳定版）或 gallery-dl 的 GitHub 代码库（master）。</string>
 </resources>

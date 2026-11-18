@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.deniscerri.ytdl.ui.more.settings.updating.UpdateStatusCardPreference
+        app:key="gallery_dl_status_card" />
+
+    <PreferenceCategory android:title="@string/update_channel">
+
+        <com.deniscerri.ytdl.ui.more.settings.updating.UpdateChannelPreference
+            app:key="gallery_dl_channel" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings">
+
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="true"
+            app:icon="@drawable/ic_update"
+            android:key="auto_update_gallery_dl"
+            app:summary="@string/auto_update_gallery_dl_summary"
+            app:title="@string/auto_update_gallery_dl" />
+
+    </PreferenceCategory>
+
+    <Preference
+        app:icon="@drawable/baseline_reset_tv_24"
+        app:key="reset_preferences"
+        android:summary="@string/reset_preferences_in_screen"
+        app:title="@string/reset" />
+
+</PreferenceScreen>

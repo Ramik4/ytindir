@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import com.deniscerri.ytdl.BuildConfig
 import com.deniscerri.ytdl.R
+import com.deniscerri.ytdl.core.GalleryDl
 import com.deniscerri.ytdl.core.RuntimeManager
 import com.deniscerri.ytdl.core.models.YTDLRequest
 import com.deniscerri.ytdl.core.packages.PackageBase.Companion.sharedClient
@@ -176,6 +177,27 @@ class UpdateUtil(var context: Context) {
             }
         }
 
+    /** YTindir: updates gallery-dl on its channel (stable from PyPI, master from GitHub) */
+    suspend fun updateGalleryDl(channel: String? = null) : YTDLPUpdateResponse =
+        withContext(Dispatchers.IO){
+            if (updatingGalleryDl) {
+                return@withContext YTDLPUpdateResponse(YTDLPUpdateStatus.PROCESSING)
+            }
+            updatingGalleryDl = true
+            try {
+                val res = GalleryDl.update(context, if (channel.isNullOrBlank()) GalleryDl.currentChannel(context) else channel)
+                if (res == GalleryDl.UpdateStatus.DONE) {
+                    YTDLPUpdateResponse(YTDLPUpdateStatus.DONE, "Updated gallery-dl to ${GalleryDl.version(context)}")
+                } else {
+                    YTDLPUpdateResponse(YTDLPUpdateStatus.ALREADY_UP_TO_DATE)
+                }
+            } catch (e: Exception) {
+                YTDLPUpdateResponse(YTDLPUpdateStatus.ERROR, e.message ?: e.toString())
+            } finally {
+                updatingGalleryDl = false
+            }
+        }
+
     @SuppressLint("Range", "UnspecifiedRegisterReceiverFlag")
     suspend fun downloadReleaseApk(release: GithubRelease, onProgress: (Long) -> Unit) : Result<File> {
         return withContext(Dispatchers.IO) {
@@ -235,6 +257,7 @@ class UpdateUtil(var context: Context) {
         const val APP_LAST_CHECK_KEY = "app_last_update_check"
         const val YTDLP_LAST_CHECK_KEY = "ytdlp_last_update_check"
         var updatingYTDL = false
+        @Volatile var updatingGalleryDl = false
         var updatingApp = false
     }
 }

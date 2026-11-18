@@ -12,6 +12,11 @@
             app:title="@string/ytdlp" />
 
         <Preference
+            app:icon="@drawable/ic_update"
+            app:key="gallery_dl_update_screen"
+            app:title="@string/gallery_dl" />
+
+        <Preference
             android:icon="@drawable/ic_update_app"
             app:key="app_update_screen"
             app:title="@string/app" />

@@ -535,6 +535,8 @@
     <string name="use_app_language_for_metadata_summary">If enabled, metadata fields will follow your app language and even affect format selection by preferring dubbed versions instead of original</string>
     <string name="installed">Installed</string>
     <string name="auto_update_ytdlp_summary">It\'s recommended to keep this on, as yt-dlp needs to be updated often to keep working! The data comes from yt-dlp\'s GitHub repository.</string>
+    <string name="auto_update_gallery_dl">Auto-update gallery-dl</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl downloads images and galleries. Sites change often, so keeping it up to date keeps image downloads working. The data comes from PyPI (stable) or gallery-dl\'s GitHub repository (master).</string>
     <string name="save_subdirectory">Save to subdirectory</string>
     <string name="save_subdirectory_summary">Save files in folders based on metadata tags</string>
     <string name="trim_filenames">Trim filenames</string>
@@ -634,6 +636,7 @@
     <string name="channel_master">Master</string>
     <string name="channel_beta">Beta</string>
     <string name="ytdlp" translatable="false">yt-dlp</string>
+    <string name="gallery_dl" translatable="false">gallery-dl</string>
 
     <string name="temporary_files">Temporary files</string>
     <string name="temporary_files_description">Working files held by the app. Temporary configurations and other yt-dlp related data.</string>
