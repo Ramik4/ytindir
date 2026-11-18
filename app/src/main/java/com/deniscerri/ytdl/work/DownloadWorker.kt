@@ -353,20 +353,12 @@ class DownloadWorker(
                                 }
                             }
                             if (galleryDlArgs != null) {
-                                val response = GalleryDl.execute(
-                                    context, galleryDlArgs,
-                                    processId = downloadItem.id.toString(),
-                                    redirectErrorStream = true,
-                                    callback = onOutput
+                                // (X's GIFs become real .gif files; Instagram and Reddit without a login
+                                // go the app's own way, see GalleryDlUtil.download)
+                                GalleryDlUtil.download(
+                                    context, downloadItem.url, downloadItem.format, tempFileDir, galleryDlArgs,
+                                    ytdlpUtil.useCookiesFor(downloadItem.url), downloadItem.id.toString(), onOutput
                                 )
-                                // X's GIFs come as mp4: real .gif files
-                                GalleryDlUtil.convertGifs(tempFileDir)
-                                // gallery-dl can end without an error and without a file (nothing it could read)
-                                if (tempFileDir.walkTopDown().none { f -> f.isFile }) {
-                                    throw ExecuteException(response.out.ifBlank { "gallery-dl" } +
-                                        "\nNo images were found in this post")
-                                }
-                                response
                             } else {
                                 RuntimeManager.getInstance().execute(
                                     request = request,
