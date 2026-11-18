@@ -2,12 +2,14 @@ package com.deniscerri.ytdl.util
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.deniscerri.ytdl.core.RuntimeManager
 import com.deniscerri.ytdl.core.models.ExecuteException
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -228,10 +230,13 @@ object SiteImages {
         val html = runCatching { webPage(context, pageUrl, 2000, REDDIT_POST_SCRIPT) }.getOrNull()
         if (html != null && html.startsWith("<shreddit-post")) {
             val (user, media) = redditPageMedia(html)
-            if (media.isNotEmpty()) return save(media, dir, user.ifBlank { "reddit" }, id, "https://www.reddit.com/", log)
             val type = attr(html, "post-type")
+            // a video post: its video (its picture is only the player's cover)
+            if (type == "video" || (media.isEmpty() && html.contains("<shreddit-player"))) {
+                return redditVideo(html, dir, user.ifBlank { "reddit" }, id, log)
+            }
+            if (media.isNotEmpty()) return save(media, dir, user.ifBlank { "reddit" }, id, "https://www.reddit.com/", log)
             log("[reddit] no images on the post page (post type: ${type.ifBlank { "?" }})")
-            if (type == "video") throw ExecuteException("This Reddit post is a video, not images")
             errors += "post page: no images (post type: ${type.ifBlank { "?" }})"
         } else {
             val what = html?.trim()?.take(150)?.ifBlank { null } ?: "the page didn't load"
@@ -253,6 +258,43 @@ object SiteImages {
         val user = post.optString("author").takeIf { it.isNotBlank() && it != "[deleted]" }
             ?: post.optString("subreddit").ifBlank { "reddit" }
         return save(media, dir, user, id, "https://www.reddit.com/", log)
+    }
+
+    /**
+     * A Reddit video post's video: the mp4 with sound Reddit's player keeps ("packaged media"),
+     * or, for videos without one, the player's HLS stream put together by ffmpeg.
+     */
+    private fun redditVideo(html: String, dir: File, user: String, id: String, log: (String) -> Unit): Int {
+        val packaged = Regex("""packaged-media-json="([^"]*)"""").find(html)?.groupValues?.get(1)?.let(::unescapeHtml)
+        val mp4 = packaged?.let { json ->
+            val perms = runCatching { JSONObject(json).optJSONObject("playbackMp4s")?.optJSONArray("permutations") }.getOrNull()
+                ?: return@let null
+            (0 until perms.length()).mapNotNull { perms.optJSONObject(it)?.optJSONObject("source") }
+                .maxByOrNull { it.optJSONObject("dimensions")?.optInt("height") ?: 0 }
+                ?.optString("url")?.takeIf { it.isNotBlank() }
+        }
+        if (mp4 != null) {
+            log("[reddit] video: Reddit's mp4 with sound")
+            return save(listOf(Media(mp4, "mp4")), dir, user, id, "https://www.reddit.com/", log)
+        }
+
+        val hls = Regex("""<shreddit-player[^>]*?\ssrc="([^"]+)"""").find(html)?.groupValues?.get(1)?.let(::unescapeHtml)
+            ?.takeIf { it.contains(".m3u8") }
+            ?: Regex("""https://v\.redd\.it/\w+/HLSPlaylist\.m3u8[^"'\s]*""").find(unescapeHtml(html))?.value
+            ?: throw ExecuteException("No video was found on this Reddit post's page")
+        log("[reddit] video: Reddit's HLS stream, joined by ffmpeg")
+        val ffmpeg = runCatching { RuntimeManager.ffmpegLocation }.getOrNull()
+            ?.takeIf { it.isAvailable } ?: throw ExecuteException("ffmpeg isn't available for this video")
+        dir.mkdirs()
+        val out = File(dir, "${user.replace(Regex("""[^\w.-]"""), "_")}_${id}_1.mp4")
+        log("[download] ${out.name}")
+        // (ffmpeg takes the best video and audio of the stream by itself)
+        RuntimeManager.executeImpl(listOf(
+            ffmpeg.executable.absolutePath, "-y", "-user_agent", BROWSER_UA, "-i", hls,
+            "-c", "copy", "-bsf:a", "aac_adtstoasc", "-movflags", "+faststart", out.absolutePath
+        ), redirectErrorStream = true)
+        if (out.length() == 0L) throw ExecuteException("ffmpeg couldn't save the video")
+        return 1
     }
 
     /** The post's own element of the page (its images; the comments are outside of it). */
@@ -431,8 +473,9 @@ object SiteImages {
     private fun save(media: List<Media>, dir: File, user: String, postId: String, referer: String, log: (String) -> Unit): Int {
         dir.mkdirs()
         val safeUser = user.replace(Regex("""[^\w.-]"""), "_")
-        media.forEachIndexed { i, m ->
-            val file = File(dir, "${safeUser}_${postId}_${i + 1}.${m.ext}")
+        var count = 0
+        media.forEach { m ->
+            val file = File(dir, "${safeUser}_${postId}_${count + 1}.${m.ext}")
             log("[download] ${file.name}")
             val urls = listOfNotNull(m.url, m.fallback)
             for ((n, u) in urls.withIndex()) {
@@ -443,9 +486,24 @@ object SiteImages {
                     }
                 if (ok) break
             }
+            // little pictures on the page that aren't the post's (Reddit's "Top 1% poster" badges,
+            // flair icons…): left out
+            if (m.ext != "mp4" && isIcon(file)) {
+                log("[skip] ${file.name}: a small icon, not a photo of the post")
+                file.delete()
+            } else {
+                count++
+            }
         }
-        return media.size
+        if (count == 0) throw ExecuteException("No images were found in this post")
+        return count
     }
+
+    private fun isIcon(file: File): Boolean = runCatching {
+        val o = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(file.absolutePath, o)
+        o.outWidth in 1..160 && o.outHeight in 1..160
+    }.getOrDefault(false)
 
     private fun extOf(url: String, fallback: String): String =
         url.substringBefore('?').substringAfterLast('/').substringAfterLast('.', "")

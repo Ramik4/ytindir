@@ -157,7 +157,7 @@ object GalleryDlUtil {
             clear()
             val first = galleryError?.message?.let { "$it\n" }.orEmpty()
             throw ExecuteException("$first[$site] ${e.message}" +
-                if (loggedIn || (reddit && hasLogin(context, "reddit.com", "reddit_session"))) "" else "\n$site didn't give the post without a login")
+                if (loggedIn || reddit) "" else "\n$site didn't give the post without a login")
         }
     }
 
