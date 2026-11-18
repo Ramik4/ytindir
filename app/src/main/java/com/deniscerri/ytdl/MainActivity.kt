@@ -38,6 +38,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.anggrayudi.storage.file.getAbsolutePath
 import com.deniscerri.ytdl.core.GalleryDl
+import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.core.RuntimeManager
 import com.deniscerri.ytdl.database.DBManager
 import com.deniscerri.ytdl.database.enums.DownloadType
@@ -618,6 +619,12 @@ class MainActivity : BaseActivity() {
                 putString("video_format", "mp4")
                 putString("video_quality", "1080p_ytdlnisgeneric")
                 putBoolean("ytindir_media_defaults_v1", true)
+            }
+        }
+        // YTindir: test builds saved images to YTindir/Image; the default folder is now YTindir/Images
+        preferences.getString("image_path", "")?.let { path ->
+            if (path.endsWith("/YTindir/Image")) {
+                preferences.edit { putString("image_path", FileUtil.getDefaultImagePath()) }
             }
         }
 

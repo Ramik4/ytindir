@@ -359,6 +359,8 @@ class DownloadWorker(
                                     redirectErrorStream = true,
                                     callback = onOutput
                                 )
+                                // X's GIFs come as mp4: real .gif files
+                                GalleryDlUtil.convertGifs(tempFileDir)
                                 // gallery-dl can end without an error and without a file (nothing it could read)
                                 if (tempFileDir.walkTopDown().none { f -> f.isFile }) {
                                     throw ExecuteException(response.out.ifBlank { "gallery-dl" } +

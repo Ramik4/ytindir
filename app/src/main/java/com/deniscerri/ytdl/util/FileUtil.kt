@@ -452,7 +452,7 @@ object FileUtil {
     }
 
     fun getDefaultImagePath() : String {
-        return "${getDefaultApplicationPath()}/Image"
+        return "${getDefaultApplicationPath()}/Images"
     }
 
     fun getDefaultCommandPath() : String {
