@@ -560,7 +560,6 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                     kotlin.runCatching {
                         if (tabLayout.selectedTabPosition != 2) tabLayout.selectTab(tabLayout.getTabAt(2))
                         if (viewPager2.currentItem != 2) viewPager2.setCurrentItem(2, false)
-                        Snackbar.make(view, getString(R.string.image_tab_selected), Snackbar.LENGTH_LONG).show()
                     }
                     resultViewModel.uiState.update {it.copy(errorMessage  = null) }
                 } else if (res.errorMessage != null){

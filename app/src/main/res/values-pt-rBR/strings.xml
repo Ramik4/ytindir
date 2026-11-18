@@ -692,6 +692,7 @@
     <string name="auto_update_gallery_dl_summary">O gallery-dl baixa imagens e galerias. Os sites mudam com frequência, então mantê-lo atualizado faz os downloads de imagens continuarem funcionando. Os dados vêm do PyPI (estável) ou do repositório GitHub do gallery-dl (master).</string>
     <string name="image">Imagem</string>
     <string name="image_download_info">Baixa todas as imagens da publicação (todas as de um carrossel ou galeria) com o gallery-dl. Funciona com Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr e muitos outros sites.</string>
+    <string name="image_download_notes">• GIFs são baixados como arquivos .gif (X, Pinterest, Reddit).\n• Com a chave ligada, os vídeos vêm com som em um único mp4. Uma postagem de vídeo do Reddit sempre baixa o vídeo.\n• Stories do Instagram, contas privadas e alguns sites exigem login: entre em Mais → Cookies e ative os cookies.</string>
     <string name="image_include_videos">Baixar também os vídeos da publicação</string>
     <string name="image_directory">Pasta de imagens</string>
     <string name="image_tab_selected">Esta publicação não tem vídeo: a aba Imagem foi selecionada</string>

@@ -16,6 +16,17 @@
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:text="@string/image_download_info" />
 
+    <TextView
+        android:id="@+id/image_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="6dp"
+        android:lineSpacingMultiplier="1.15"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:text="@string/image_download_notes" />
+
     <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/image_include_videos"
         android:layout_width="match_parent"
