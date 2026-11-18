@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="6dp">
+
+    <TextView
+        android:id="@+id/image_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="6dp"
+        android:drawablePadding="12dp"
+        android:gravity="center_vertical"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:text="@string/image_download_info" />
+
+    <TextView
+        android:id="@+id/image_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="6dp"
+        android:lineSpacingMultiplier="1.15"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:text="@string/image_download_notes" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/image_include_videos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:minHeight="48dp"
+        android:text="@string/image_include_videos" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/outputPath"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="10dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/save_dir"
+        style="@style/Widget.Material3.TextInputLayout.FilledBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:inputType="text"
+            android:maxLines="2"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/freespace"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="5dp"
+        android:textSize="13sp"
+        android:textColor="@android:color/tab_indicator_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

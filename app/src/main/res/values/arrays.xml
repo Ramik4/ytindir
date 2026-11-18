@@ -1058,6 +1058,16 @@
     </array>
 
 
+    <array name="gallery_dl_source">
+        <item>@string/channel_stable</item>
+        <item>@string/channel_master</item>
+    </array>
+
+    <array name="gallery_dl_source_values">
+        <item>stable</item>
+        <item>master</item>
+    </array>
+
     <array name="ytdlp_source_values">
         <item>stable</item>
         <item>nightly</item>

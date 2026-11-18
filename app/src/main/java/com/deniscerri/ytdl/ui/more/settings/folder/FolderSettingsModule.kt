@@ -28,6 +28,7 @@ object FolderSettingsModule: SettingModule {
     const val VIDEO_PATH_CODE = 55555
     const val COMMAND_PATH_CODE = 77777
     const val CACHE_PATH_CODE = 99999
+    const val IMAGE_PATH_CODE = 66666
 
     override fun bindLogic(
         pref: Preference,
@@ -88,6 +89,34 @@ object FolderSettingsModule: SettingModule {
                                     )
                                 }
                                 changePath(host, pref, result.data, VIDEO_PATH_CODE)
+                            }
+                            true
+                        }
+                }
+            }
+            "image_path" -> {
+                if (preferences.getString(pref.key, "")!!.isEmpty()) {
+                    preferences.edit(commit = true) {
+                        putString(pref.key, FileUtil.getDefaultImagePath())
+                    }
+                }
+                pref.apply {
+                    summary = FileUtil.formatPath(preferences.getString(pref.key, "")!!)
+                    onPreferenceClickListener =
+                        Preference.OnPreferenceClickListener {
+                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                            host.activityResultDelegate.launch(intent) { result ->
+                                result.data?.data?.let {
+                                    host.getHostContext().contentResolver?.takePersistableUriPermission(
+                                        it,
+                                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    )
+                                }
+                                changePath(host, pref, result.data, IMAGE_PATH_CODE)
                             }
                             true
                         }
@@ -303,6 +332,7 @@ object FolderSettingsModule: SettingModule {
         when (requestCode) {
             MUSIC_PATH_CODE -> editor.putString("music_path", path)
             VIDEO_PATH_CODE -> editor.putString("video_path", path)
+            IMAGE_PATH_CODE -> editor.putString("image_path", path)
             COMMAND_PATH_CODE -> editor.putString("command_path", path)
             CACHE_PATH_CODE -> editor.putString("cache_path", path)
         }

@@ -43,6 +43,8 @@ class Converters {
         return when(string){
             "audio" -> DownloadType.audio
             "video" -> DownloadType.video
+            // YTindir: image downloads (gallery-dl)
+            "image" -> DownloadType.image
             else -> DownloadType.command
         }
     }

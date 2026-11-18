@@ -79,6 +79,7 @@ class SettingsActivity : BaseActivity(), SettingHost {
         R.xml.processing_preferences to R.id.processingSettingsFragment,
         R.xml.updating_preferences to R.id.updateSettingsFragment,
         R.xml.ytdlp_update_preferences to R.id.ytdlpUpdateSettingsFragment,
+        R.xml.gallery_dl_update_preferences to R.id.galleryDlUpdateSettingsFragment,
         R.xml.app_update_preferences to R.id.appUpdateSettingsFragment,
         R.xml.advanced_preferences to R.id.advancedSettingsFragment,
         R.xml.backup_preferences to R.id.backupSettingsFragment,

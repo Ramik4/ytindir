@@ -15,8 +15,9 @@ class UpdateSettingsFragment : BaseSettingsFragment() {
 
     override fun onResume() {
         super.onResume()
-        // version / channel may have changed in the yt-dlp screen
+        // version / channel may have changed in the yt-dlp or gallery-dl screen
         findPreference<Preference>("ytdlp_update_screen")?.let { UpdateSettingsModule.bindLogic(it, this) }
+        findPreference<Preference>("gallery_dl_update_screen")?.let { UpdateSettingsModule.bindLogic(it, this) }
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

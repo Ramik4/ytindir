@@ -21,6 +21,13 @@ object ErrorHints {
         Rule(R.string.hint_instagram_logged_out) { m, site ->
             site == SocialMediaUtil.Site.INSTAGRAM && has(m, "Failed to parse JSON", "JSONDecodeError")
         },
+        Rule(R.string.hint_reddit_login) { m, _ ->
+            has(m, "[Reddit]", "[reddit]", "reddit.com") &&
+                has(m, "Account authentication is required", "without a login", "401: Unauthorized", "403: Blocked")
+        },
+        Rule(R.string.hint_instagram_login) { m, _ ->
+            has(m, "Instagram didn't give the post without a login")
+        },
         Rule(R.string.hint_youtube_bot) { m, _ ->
             has(m, "confirm you’re not a bot", "confirm you're not a bot", "confirm that you're not a bot")
         },

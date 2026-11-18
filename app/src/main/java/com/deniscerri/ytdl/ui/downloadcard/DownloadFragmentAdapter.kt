@@ -15,7 +15,9 @@ class DownloadFragmentAdapter (
     nonSpecific: Boolean = false,
     var isIncognito: Boolean = false,
     // YTindir: the command page is only offered for text files, never for normal links
-    private val showCommand: Boolean = true
+    private val showCommand: Boolean = true,
+    // YTindir: the Image page (gallery-dl) is offered for links other than YouTube
+    private val showImage: Boolean = false
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     fun setResultItem(res: ResultItem){
@@ -25,7 +27,7 @@ class DownloadFragmentAdapter (
             when(idx) {
                 0 -> kotlin.runCatching { (it as DownloadAudioFragment).updateUI(res) }
                 1 -> kotlin.runCatching { (it as DownloadVideoFragment).updateUI(res) }
-                2 -> kotlin.runCatching { (it as DownloadCommandFragment).updateUI(res) }
+                2 -> kotlin.runCatching { (it as GUISync).updateUI(res) }
             }
         }
     }
@@ -41,11 +43,12 @@ class DownloadFragmentAdapter (
     val fragments = listOf<Fragment>(
         DownloadAudioFragment(result, downloadItem,"", nonSpecific),
         DownloadVideoFragment(result, downloadItem,"", nonSpecific),
-        DownloadCommandFragment(result, downloadItem)
+        // YTindir: the third page is Command for text files and Image (gallery-dl) for links
+        if (showCommand) DownloadCommandFragment(result, downloadItem) else DownloadImageFragment(result, downloadItem)
     )
 
     override fun getItemCount(): Int {
-        return if (showCommand) fragments.size else 2
+        return if (showCommand || showImage) fragments.size else 2
     }
 
 
@@ -77,9 +80,7 @@ class DownloadFragmentAdapter (
             }
             2 -> {
                 kotlin.runCatching {
-                    (fragments[2] as DownloadCommandFragment).apply {
-                        updateTitleAuthor(prevDownloadItem.title, prevDownloadItem.author)
-                    }
+                    (fragments[2] as GUISync).updateTitleAuthor(prevDownloadItem.title, prevDownloadItem.author)
                 }
             }
             else -> {}
@@ -90,7 +91,10 @@ class DownloadFragmentAdapter (
         return when(position) {
             0 -> (fragments[0] as DownloadAudioFragment).downloadItem
             1 -> (fragments[1] as DownloadVideoFragment).downloadItem
-            else -> (fragments[2] as DownloadCommandFragment).downloadItem
+            else -> when (val third = fragments[2]) {
+                is DownloadImageFragment -> third.downloadItem
+                else -> (third as DownloadCommandFragment).downloadItem
+            }
         }.apply {
             incognito = isIncognito
         }

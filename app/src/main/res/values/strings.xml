@@ -535,6 +535,8 @@
     <string name="use_app_language_for_metadata_summary">If enabled, metadata fields will follow your app language and even affect format selection by preferring dubbed versions instead of original</string>
     <string name="installed">Installed</string>
     <string name="auto_update_ytdlp_summary">It\'s recommended to keep this on, as yt-dlp needs to be updated often to keep working! The data comes from yt-dlp\'s GitHub repository.</string>
+    <string name="auto_update_gallery_dl">Auto-update gallery-dl</string>
+    <string name="auto_update_gallery_dl_summary">gallery-dl downloads images and galleries. Sites change often, so keeping it up to date keeps image downloads working. The data comes from PyPI (stable) or gallery-dl\'s GitHub repository (master).</string>
     <string name="save_subdirectory">Save to subdirectory</string>
     <string name="save_subdirectory_summary">Save files in folders based on metadata tags</string>
     <string name="trim_filenames">Trim filenames</string>
@@ -634,6 +636,7 @@
     <string name="channel_master">Master</string>
     <string name="channel_beta">Beta</string>
     <string name="ytdlp" translatable="false">yt-dlp</string>
+    <string name="gallery_dl" translatable="false">gallery-dl</string>
 
     <string name="temporary_files">Temporary files</string>
     <string name="temporary_files_description">Working files held by the app. Temporary configurations and other yt-dlp related data.</string>
@@ -709,6 +712,8 @@
     <string name="hint_youtube_bot">YouTube wants to make sure you\'re not a bot. Add your YouTube account in More → Cookies and turn Cookies on, or try again a bit later.</string>
     <string name="hint_age_restricted">This video is age-restricted. Add an account that can watch it in More → Cookies and turn Cookies on.</string>
     <string name="hint_private">This video or account is private. It can only be downloaded with an account that can see it, added in More → Cookies.</string>
+    <string name="hint_instagram_login">Instagram didn\'t show this post without a login. Log in to Instagram in More → Cookies and turn Cookies on, then try again.</string>
+    <string name="hint_reddit_login">Reddit now shows posts only to logged-in accounts. Log in to Reddit in More → Cookies and turn Cookies on.</string>
     <string name="hint_login_required">This content needs an account. Log in to the site in More → Cookies and turn Cookies on.</string>
     <string name="hint_geo_blocked">This video isn\'t available in your country. A VPN (or a proxy in Settings → Downloads) can help.</string>
     <string name="hint_unavailable">This video was removed or isn\'t available any more. Check that the link still opens in the app or browser.</string>
@@ -746,4 +751,9 @@
     <string name="quick_original_size">Original size</string>
     <string name="quick_thumbnail_saved">Thumbnail saved</string>
     <string name="powered_by">Powered by</string>
+    <string name="image">Image</string>
+    <string name="image_download_info">Downloads every image in the post (all images of a carousel or gallery) with gallery-dl. Works with Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr and many more sites.</string>
+    <string name="image_download_notes">• GIFs come as .gif files (X, Pinterest, Reddit).\n• With the switch on, videos come with their sound as one mp4. A Reddit video post always gives its video.\n• Instagram stories, private accounts and some sites need a login: log in under More → Cookies and turn Cookies on.</string>
+    <string name="image_include_videos">Also download the post\'s videos</string>
+    <string name="image_directory">Image folder</string>
 </resources>

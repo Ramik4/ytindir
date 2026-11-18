@@ -6,6 +6,8 @@ import androidx.preference.PreferenceManager
 import com.deniscerri.ytdl.App
 import com.deniscerri.ytdl.BuildConfig
 import com.deniscerri.ytdl.R
+import com.deniscerri.ytdl.core.GalleryDl
+import com.deniscerri.ytdl.ui.more.settings.updating.gallerydl.GalleryDlUpdateSettingsModule
 import com.deniscerri.ytdl.ui.more.settings.SettingHost
 import com.deniscerri.ytdl.ui.more.settings.SettingModule
 import com.deniscerri.ytdl.util.ApkInstallUtil
@@ -34,6 +36,15 @@ object UpdateSettingsModule : SettingModule {
                     summary = "$version (${channel})"
                     setOnPreferenceClickListener {
                         host.requestNavigate(R.id.ytdlpUpdateSettingsFragment)
+                        true
+                    }
+                }
+            }
+            "gallery_dl_update_screen" -> {
+                pref.apply {
+                    summary = "${GalleryDl.version(context)} (${GalleryDlUpdateSettingsModule.channelName(context)})"
+                    setOnPreferenceClickListener {
+                        host.requestNavigate(R.id.galleryDlUpdateSettingsFragment)
                         true
                     }
                 }

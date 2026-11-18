@@ -14,6 +14,7 @@ import com.deniscerri.ytdl.ui.more.settings.general.GeneralSettingsModule
 import com.deniscerri.ytdl.ui.more.settings.processing.ProcessingSettingsModule
 import com.deniscerri.ytdl.ui.more.settings.updating.app.AppUpdateSettingsModule
 import com.deniscerri.ytdl.ui.more.settings.updating.UpdateSettingsModule
+import com.deniscerri.ytdl.ui.more.settings.updating.gallerydl.GalleryDlUpdateSettingsModule
 import com.deniscerri.ytdl.ui.more.settings.updating.ytdlp.YtdlpUpdateSettingsModule
 
 object SettingsRegistry {
@@ -26,6 +27,7 @@ object SettingsRegistry {
         R.xml.processing_preferences to ProcessingSettingsModule,
         R.xml.updating_preferences to UpdateSettingsModule,
         R.xml.ytdlp_update_preferences to YtdlpUpdateSettingsModule,
+        R.xml.gallery_dl_update_preferences to GalleryDlUpdateSettingsModule,
         R.xml.app_update_preferences to AppUpdateSettingsModule,
         R.xml.advanced_preferences to AdvancedSettingsModule,
         R.xml.backup_preferences to null,

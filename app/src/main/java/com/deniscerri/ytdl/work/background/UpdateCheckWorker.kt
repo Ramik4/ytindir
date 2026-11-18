@@ -11,6 +11,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.deniscerri.ytdl.App
 import com.deniscerri.ytdl.BuildConfig
+import com.deniscerri.ytdl.core.GalleryDl
 import com.deniscerri.ytdl.core.RuntimeManager
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
@@ -69,6 +70,10 @@ class UpdateCheckWorker(
 
                 else -> {}
             }
+        }
+
+        if (sharedPreferences.getBoolean(GalleryDl.AUTO_UPDATE_KEY, true)) {
+            updateUtil.updateGalleryDl()
         }
 
         return Result.success()

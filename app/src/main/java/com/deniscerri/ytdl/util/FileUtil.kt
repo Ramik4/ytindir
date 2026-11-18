@@ -451,6 +451,10 @@ object FileUtil {
         return "${getDefaultApplicationPath()}/Video"
     }
 
+    fun getDefaultImagePath() : String {
+        return "${getDefaultApplicationPath()}/Images"
+    }
+
     fun getDefaultCommandPath() : String {
         return "${getDefaultApplicationPath()}/Command"
     }

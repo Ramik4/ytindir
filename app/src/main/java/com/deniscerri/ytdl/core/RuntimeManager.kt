@@ -191,6 +191,9 @@ object RuntimeManager {
                     val ytdlpPluginsFolder = File(FileUtil.getBundledYTDLPPluginsPath(appContext))
                     copyAssetFolder(appContext, "yt_dlp_plugins", ytdlpPluginsFolder)
 
+                    // YTindir: gallery-dl for images; a failure here must not stop yt-dlp from working
+                    runCatching { GalleryDl.init(appContext) }
+
                     initialized = true
                 } catch (e: Exception) {
                     e.printStackTrace()

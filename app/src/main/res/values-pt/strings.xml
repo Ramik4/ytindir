@@ -494,4 +494,11 @@
     <string name="update_ytdlp_while_downloading">Atualizar yt-dlp durante o download</string>
     <string name="update_ytdlp_while_downloading_summary">Adicionar -U ao yt-dlp para atualizá-lo com a versão mais recente antes de fazer o download</string>
     <string name="prefer_drc_audio">Preferir DRC Audio</string>
+    <string name="auto_update_gallery_dl">Atualizar gallery-dl automaticamente</string>
+    <string name="auto_update_gallery_dl_summary">O gallery-dl transfere imagens e galerias. Os sites mudam com frequência, por isso mantê-lo atualizado faz com que as transferências de imagens continuem a funcionar. Os dados vêm do PyPI (estável) ou do repositório GitHub do gallery-dl (master).</string>
+    <string name="image">Imagem</string>
+    <string name="image_download_info">Transfere todas as imagens da publicação (todas as de um carrossel ou galeria) com o gallery-dl. Funciona com Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr e muitos outros sites.</string>
+    <string name="image_download_notes">• Os GIF são transferidos como ficheiros .gif (X, Pinterest, Reddit).\n• Com o interruptor ativo, os vídeos vêm com som num único mp4. Uma publicação de vídeo do Reddit dá sempre o seu vídeo.\n• Histórias do Instagram, contas privadas e alguns sites exigem sessão iniciada: inicie sessão em Mais → Cookies e ative os cookies.</string>
+    <string name="image_include_videos">Transferir também os vídeos da publicação</string>
+    <string name="image_directory">Pasta de imagens</string>
 </resources>
