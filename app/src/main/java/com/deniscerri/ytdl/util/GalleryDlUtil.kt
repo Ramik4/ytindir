@@ -104,8 +104,7 @@ object GalleryDlUtil {
     /**
      * Downloads [url]'s images into [dir]: with gallery-dl, or the app's own way in (SiteImages)
      * where gallery-dl needs a login the cookies don't have, or fails:
-     * - Reddit: gallery-dl only with a Reddit login in the cookies; otherwise (or when it fails)
-     *   the post as the phone's browser gets it
+     * - Reddit: always the post page as the phone's browser gets it
      * - Instagram: gallery-dl only with an Instagram login; otherwise (or when it fails) the post's
      *   embed page and post page, which logged-out visitors get too
      */
@@ -121,7 +120,9 @@ object GalleryDlUtil {
         val reddit = SiteImages.isReddit(url)
         val instagram = SiteImages.isInstagramPost(url)
         val loggedIn = when {
-            reddit -> useCookies && hasLogin(context, "reddit.com", "reddit_session")
+            // Reddit blocks its JSON for gallery-dl even with a login ("Your IP address is unable
+            // to access the Reddit API"): its post page instead
+            reddit -> false
             instagram -> useCookies && hasLogin(context, "instagram.com", "sessionid")
             else -> true
         }
@@ -142,8 +143,11 @@ object GalleryDlUtil {
         if (!reddit && !instagram) throw galleryError!!
 
         val site = if (reddit) "Reddit" else "Instagram"
-        log(if (loggedIn) "[YTindir] gallery-dl couldn't read the post, trying $site's pages"
-            else "[YTindir] No $site login in the cookies: reading the post's pages")
+        log(when {
+            reddit -> "[YTindir] Reddit: reading the post's page"
+            loggedIn -> "[YTindir] gallery-dl couldn't read the post, trying $site's pages"
+            else -> "[YTindir] No $site login in the cookies: reading the post's pages"
+        })
         clear()
         return try {
             val count = if (reddit) SiteImages.reddit(context, url, dir, log)
@@ -153,7 +157,7 @@ object GalleryDlUtil {
             clear()
             val first = galleryError?.message?.let { "$it\n" }.orEmpty()
             throw ExecuteException("$first[$site] ${e.message}" +
-                if (loggedIn) "" else "\n$site didn't give the post without a login")
+                if (loggedIn || (reddit && hasLogin(context, "reddit.com", "reddit_session"))) "" else "\n$site didn't give the post without a login")
         }
     }
 

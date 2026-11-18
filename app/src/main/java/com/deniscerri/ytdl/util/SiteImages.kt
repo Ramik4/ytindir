@@ -49,7 +49,7 @@ object SiteImages {
     fun isInstagramPost(url: String) = instagramRegex.containsMatchIn(url)
     fun isReddit(url: String) = redditRegex.containsMatchIn(url)
 
-    private class Media(val url: String, val ext: String)
+    private class Media(val url: String, val ext: String, val fallback: String? = null)
 
     // ---------------------------------------------------------------- Instagram
 
@@ -220,30 +220,67 @@ object SiteImages {
             ?: Regex("""redd\.it/(\w+)""").find(postUrl)?.groupValues?.get(1)
             ?: throw ExecuteException("No Reddit post in this link: $postUrl")
 
-        val attempts = listOf<Pair<String, () -> JSONObject>>(
-            "browser" to { redditPostInBrowser(context, "https://www.reddit.com/comments/$id/.json?raw_json=1") },
-            "browser (old Reddit)" to { redditPostInBrowser(context, "https://old.reddit.com/comments/$id/.json?raw_json=1") },
-            "Reddit app API" to { redditPostFromAppApi(id) },
-        )
+        // Reddit's JSON is blocked for everything but its own apps ("blocked by network security",
+        // "Your IP address is unable to access the Reddit API"), its post page is not
+        val pageUrl = if (postUrl.contains("/comments/")) postUrl.substringBefore('?') else "https://www.reddit.com/comments/$id/"
+        log("[reddit] $id: reading the post page in the browser")
         val errors = mutableListOf<String>()
-        for ((name, load) in attempts) {
-            log("[reddit] $id: reading the post ($name)")
-            val post = try {
-                load()
-            } catch (e: Exception) {
-                log("[reddit] $name: ${e.message}")
-                errors += "$name: ${e.message}"
-                continue
-            }
-            // a crosspost: the media are on the original post
-            val source = post.optJSONArray("crosspost_parent_list")?.optJSONObject(0) ?: post
-            val media = redditMedia(source)
-            if (media.isEmpty()) throw ExecuteException("No images were found in this Reddit post")
-            val user = post.optString("author").takeIf { it.isNotBlank() && it != "[deleted]" }
-                ?: post.optString("subreddit").ifBlank { "reddit" }
-            return save(media, dir, user, id, "https://www.reddit.com/", log)
+        val html = runCatching { webPage(context, pageUrl, 2000, REDDIT_POST_SCRIPT) }.getOrNull()
+        if (html != null && html.startsWith("<shreddit-post")) {
+            val (user, media) = redditPageMedia(html)
+            if (media.isNotEmpty()) return save(media, dir, user.ifBlank { "reddit" }, id, "https://www.reddit.com/", log)
+            val type = attr(html, "post-type")
+            log("[reddit] no images on the post page (post type: ${type.ifBlank { "?" }})")
+            if (type == "video") throw ExecuteException("This Reddit post is a video, not images")
+            errors += "post page: no images (post type: ${type.ifBlank { "?" }})"
+        } else {
+            val what = html?.trim()?.take(150)?.ifBlank { null } ?: "the page didn't load"
+            log("[reddit] post page: $what")
+            errors += "post page: $what"
         }
-        throw ExecuteException(errors.joinToString("\n"))
+
+        log("[reddit] $id: reading the post (Reddit app API)")
+        val post = try {
+            redditPostFromAppApi(id)
+        } catch (e: Exception) {
+            errors += "Reddit app API: ${e.message}"
+            throw ExecuteException(errors.joinToString("\n"))
+        }
+        // a crosspost: the media are on the original post
+        val source = post.optJSONArray("crosspost_parent_list")?.optJSONObject(0) ?: post
+        val media = redditMedia(source)
+        if (media.isEmpty()) throw ExecuteException("No images were found in this Reddit post")
+        val user = post.optString("author").takeIf { it.isNotBlank() && it != "[deleted]" }
+            ?: post.optString("subreddit").ifBlank { "reddit" }
+        return save(media, dir, user, id, "https://www.reddit.com/", log)
+    }
+
+    /** The post's own element of the page (its images; the comments are outside of it). */
+    private const val REDDIT_POST_SCRIPT = "(function(){var p=document.querySelector('shreddit-post');" +
+        "return p ? p.outerHTML : (document.title || '') + ' | ' + (document.body ? document.body.innerText.slice(0, 200) : '');})()"
+
+    private fun attr(html: String, name: String) =
+        Regex("""\b$name="([^"]*)"""").find(html.substringBefore('>'))?.groupValues?.get(1)?.let(::unescapeHtml).orEmpty()
+
+    /**
+     * The images of a post page's <shreddit-post>: i.redd.it files as they are, preview.redd.it
+     * copies (galleries) turned into their original i.redd.it file, as gallery-dl does.
+     */
+    private fun redditPageMedia(html: String): Pair<String, List<Media>> {
+        val user = attr(html, "author").takeIf { it != "[deleted]" }.orEmpty()
+        val text = unescapeHtml(html)
+        val seen = mutableSetOf<String>()
+        val media = Regex("""https://(i|preview)\.redd\.it/([^"'\s,?/]+)\.(jpe?g|png|gif|webp)(\?[^"'\s,]*)?""", RegexOption.IGNORE_CASE)
+            .findAll(text).mapNotNull { m ->
+                val (host, name, extRaw) = m.destructured
+                val ext = extRaw.lowercase().replace("jpeg", "jpg")
+                // "title-words-v0-abc123" → abc123
+                val mediaId = name.substringAfterLast("-v0-")
+                if (!seen.add(mediaId)) return@mapNotNull null
+                if (host.equals("i", true)) Media(m.value.substringBefore('?'), ext)
+                else Media("https://i.redd.it/$mediaId.$ext", ext, fallback = m.value)
+            }.toList()
+        return user to media
     }
 
     private fun redditPost(json: String): JSONObject {
@@ -251,12 +288,6 @@ object SiteImages {
             ?: throw ExecuteException("not the post's data: ${json.trim().take(150)}")
         return array.getJSONObject(0).getJSONObject("data").getJSONArray("children")
             .getJSONObject(0).getJSONObject("data")
-    }
-
-    private fun redditPostInBrowser(context: Context, url: String): JSONObject {
-        val text = webPage(context, url, 500, "document.body ? document.body.innerText : ''")
-            ?: throw ExecuteException("the page didn't load")
-        return redditPost(text)
     }
 
     private fun redditPostFromAppApi(id: String): JSONObject {
@@ -403,11 +434,15 @@ object SiteImages {
         media.forEachIndexed { i, m ->
             val file = File(dir, "${safeUser}_${postId}_${i + 1}.${m.ext}")
             log("[download] ${file.name}")
-            client.newCall(Request.Builder().url(m.url).header("User-Agent", BROWSER_UA).header("Referer", referer).build())
-                .execute().use { r ->
-                    if (!r.isSuccessful) throw ExecuteException("HTTP Error ${r.code} downloading ${m.url}")
-                    file.outputStream().use { out -> r.body.byteStream().copyTo(out) }
-                }
+            val urls = listOfNotNull(m.url, m.fallback)
+            for ((n, u) in urls.withIndex()) {
+                val ok = client.newCall(Request.Builder().url(u).header("User-Agent", BROWSER_UA).header("Referer", referer).build())
+                    .execute().use { r ->
+                        if (r.isSuccessful) file.outputStream().use { out -> r.body.byteStream().copyTo(out) }
+                        r.isSuccessful.also { if (!it && n == urls.lastIndex) throw ExecuteException("HTTP Error ${r.code} downloading $u") }
+                    }
+                if (ok) break
+            }
         }
         return media.size
     }

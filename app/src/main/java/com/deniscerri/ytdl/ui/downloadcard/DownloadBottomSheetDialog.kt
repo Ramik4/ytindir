@@ -781,7 +781,7 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
     // yt-dlp's errors when Instagram or Reddit won't give it the post without a login: the Image
     // tab reads the post its own way (its pages as the phone's browser gets them)
     private val blockedPostError = Regex(
-        "Failed to parse JSON|Account authentication is required|403: Blocked",
+        "Failed to parse JSON|Account authentication is required|403: Blocked|unable to access the Reddit API",
         RegexOption.IGNORE_CASE
     )
 
