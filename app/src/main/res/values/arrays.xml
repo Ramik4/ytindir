@@ -755,6 +755,19 @@
         <item>observeSources</item>
     </array>
 
+    <!-- YTindir: how subtitles are saved -->
+    <string-array name="subtitle_save_as">
+        <item>@string/subs_save_embed</item>
+        <item>@string/subs_save_file</item>
+        <item>@string/subs_save_both</item>
+    </string-array>
+
+    <string-array name="subtitle_save_as_values" translatable="false">
+        <item>embed</item>
+        <item>file</item>
+        <item>both</item>
+    </string-array>
+
     <string-array name="sub_formats">
         <item>@string/defaultValue</item>
         <item>srt</item>

@@ -698,4 +698,14 @@
     <string name="image_download_notes">• GIF 以 .gif 文件下载（X、Pinterest、Reddit）。\n• 开关打开时，视频带声音合并为一个 mp4。Reddit 视频帖子总是下载视频。\n• Instagram 快拍、私密账号和部分网站需要登录：在 更多 → Cookies 中登录并开启 Cookies。</string>
     <string name="image_include_videos">同时下载帖子中的视频</string>
     <string name="image_directory">图片文件夹</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">下载字幕</string>
+    <string name="subs_download_summary">随视频一起下载字幕</string>
+    <string name="subs_auto_translate">YouTube 自动翻译</string>
+    <string name="subs_auto_translate_summary">某种语言没有自己的字幕时，下载 YouTube 的自动翻译（或自动生成的字幕）</string>
+    <string name="subs_save_as">保存方式</string>
+    <string name="subs_save_embed">嵌入视频</string>
+    <string name="subs_save_file">单独文件 (.srt)</string>
+    <string name="subs_save_both">两者都要</string>
+    <string name="subs_phone_language">%1$s（手机语言）</string>
 </resources>

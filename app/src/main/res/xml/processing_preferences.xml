@@ -205,6 +205,40 @@
             app:useSimpleSummaryProvider="true"
             app:title="@string/subtitle_format" />
 
+        <!-- YTindir: subtitles, simply: on, YouTube's auto-translation, the languages and how they are saved -->
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="false"
+            app:icon="@drawable/ic_subtitles"
+            app:key="download_subtitles"
+            app:summary="@string/subs_download_summary"
+            app:title="@string/subs_download" />
+
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="true"
+            app:dependency="download_subtitles"
+            app:icon="@drawable/ic_language"
+            app:key="subtitles_auto_translate"
+            app:summary="@string/subs_auto_translate_summary"
+            app:title="@string/subs_auto_translate" />
+
+        <Preference
+            app:dependency="download_subtitles"
+            app:icon="@drawable/baseline_subject_24"
+            app:key="subtitle_langs"
+            app:title="@string/subtitle_languages" />
+
+        <ListPreference
+            app:defaultValue="embed"
+            app:dependency="download_subtitles"
+            app:entries="@array/subtitle_save_as"
+            app:entryValues="@array/subtitle_save_as_values"
+            app:icon="@drawable/ic_subtitles_alternative"
+            app:key="subtitle_save_as"
+            app:title="@string/subs_save_as"
+            app:useSimpleSummaryProvider="true" />
+
         <SwitchPreferenceCompat
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"

@@ -21,5 +21,7 @@ data class VideoPreferences (
     var waitForVideoMinutes: Int = 0,
     var compatibilityMode: Boolean = false,
     var embedThumbnail: Boolean = false,
-    var cropValues: String = ""
+    var cropValues: String = "",
+    // YTindir: subtitles embedded in the video also kept as a file next to it
+    var keepSubFiles: Boolean = false
 ) : Parcelable

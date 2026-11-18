@@ -772,4 +772,14 @@
     <string name="image_download_notes">• GIF\'ler .gif dosyası olarak iner (X, Pinterest, Reddit).\n• Anahtar açıksa videolar sesiyle tek mp4 olarak iner. Reddit\'teki video gönderilerinde video her zaman iner.\n• Instagram hikâyeleri, gizli hesaplar ve bazı siteler giriş ister: Daha Fazla → Çerezler\'den giriş yapıp çerezleri aç.</string>
     <string name="image_include_videos">Gönderideki videoları da indir</string>
     <string name="image_directory">Görsel klasörü</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">Altyazıları indir</string>
+    <string name="subs_download_summary">Videonun altyazılarını videoyla birlikte indirir</string>
+    <string name="subs_auto_translate">YouTube otomatik çevirisi</string>
+    <string name="subs_auto_translate_summary">Bir dilin kendi altyazısı yoksa YouTube\'un otomatik çevirisi (ya da otomatik altyazısı) indirilir</string>
+    <string name="subs_save_as">Kaydetme şekli</string>
+    <string name="subs_save_embed">Videonun içinde</string>
+    <string name="subs_save_file">Ayrı dosya (.srt)</string>
+    <string name="subs_save_both">İkisi de</string>
+    <string name="subs_phone_language">%1$s (telefonun dili)</string>
 </resources>

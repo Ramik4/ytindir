@@ -42,6 +42,7 @@ import com.deniscerri.ytdl.util.LocaleUtil
 import com.deniscerri.ytdl.util.Extensions.needsDataUpdating
 import com.deniscerri.ytdl.util.Extensions.toListString
 import com.deniscerri.ytdl.util.FileUtil
+import com.deniscerri.ytdl.util.Subtitles
 import com.deniscerri.ytdl.util.GalleryDlUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.NotificationUtil
@@ -319,6 +320,8 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
             removeAudio = removeAudio,
             alsoDownloadAsAudio = alsoDownloadAudio
         )
+        // YTindir: subtitles as set in the settings
+        Subtitles.applyDefaults(videoPreferences, sharedPreferences)
 
         val extraCommands = when(type){
             DownloadType.audio -> extraCommandsForAudio
@@ -522,6 +525,7 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
             compatibilityMode = compatibilityMode,
             removeAudio = removeAudio,
             alsoDownloadAsAudio = alsoDownloadAudio)
+        Subtitles.applyDefaults(videoPreferences, sharedPreferences)
         var path = defaultPath
         historyItem.downloadPath.first().apply {
             File(this).parent?.apply {

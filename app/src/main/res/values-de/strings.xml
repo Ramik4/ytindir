@@ -597,4 +597,14 @@
     <string name="image_download_notes">• GIFs werden als .gif-Dateien geladen (X, Pinterest, Reddit).\n• Mit dem Schalter kommen Videos mit Ton als eine mp4. Ein Reddit-Videobeitrag liefert immer sein Video.\n• Instagram-Storys, private Konten und manche Seiten brauchen eine Anmeldung: unter Mehr → Cookies anmelden und Cookies einschalten.</string>
     <string name="image_include_videos">Auch die Videos des Beitrags herunterladen</string>
     <string name="image_directory">Bilder-Ordner</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">Untertitel herunterladen</string>
+    <string name="subs_download_summary">Lädt die Untertitel des Videos mit herunter</string>
+    <string name="subs_auto_translate">Automatische YouTube-Übersetzung</string>
+    <string name="subs_auto_translate_summary">Hat eine Sprache keine eigenen Untertitel, wird die automatische Übersetzung von YouTube (oder seine automatischen Untertitel) heruntergeladen</string>
+    <string name="subs_save_as">Speichern als</string>
+    <string name="subs_save_embed">Im Video</string>
+    <string name="subs_save_file">Separate Datei (.srt)</string>
+    <string name="subs_save_both">Beides</string>
+    <string name="subs_phone_language">%1$s (Sprache des Telefons)</string>
 </resources>

@@ -785,4 +785,14 @@
     <string name="image_download_notes">• GIF скачиваются как файлы .gif (X, Pinterest, Reddit).\n• Если переключатель включён, видео скачиваются со звуком одним mp4. Видеопост Reddit всегда даёт своё видео.\n• Истории Instagram, закрытые аккаунты и некоторые сайты требуют входа: войдите в Ещё → Cookies и включите cookies.</string>
     <string name="image_include_videos">Также скачивать видео из публикации</string>
     <string name="image_directory">Папка для изображений</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">Скачивать субтитры</string>
+    <string name="subs_download_summary">Скачивает субтитры вместе с видео</string>
+    <string name="subs_auto_translate">Автоперевод YouTube</string>
+    <string name="subs_auto_translate_summary">Если для языка нет своих субтитров, скачивается автоматический перевод YouTube (или автоматические субтитры)</string>
+    <string name="subs_save_as">Сохранять</string>
+    <string name="subs_save_embed">В видео</string>
+    <string name="subs_save_file">Отдельным файлом (.srt)</string>
+    <string name="subs_save_both">И то, и другое</string>
+    <string name="subs_phone_language">%1$s (язык телефона)</string>
 </resources>

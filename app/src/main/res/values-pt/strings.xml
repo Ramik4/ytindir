@@ -501,4 +501,14 @@
     <string name="image_download_notes">• Os GIF são transferidos como ficheiros .gif (X, Pinterest, Reddit).\n• Com o interruptor ativo, os vídeos vêm com som num único mp4. Uma publicação de vídeo do Reddit dá sempre o seu vídeo.\n• Histórias do Instagram, contas privadas e alguns sites exigem sessão iniciada: inicie sessão em Mais → Cookies e ative os cookies.</string>
     <string name="image_include_videos">Transferir também os vídeos da publicação</string>
     <string name="image_directory">Pasta de imagens</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">Transferir legendas</string>
+    <string name="subs_download_summary">Transfere as legendas do vídeo juntamente com ele</string>
+    <string name="subs_auto_translate">Tradução automática do YouTube</string>
+    <string name="subs_auto_translate_summary">Se um idioma não tiver legendas próprias, é transferida a tradução automática do YouTube (ou as legendas automáticas)</string>
+    <string name="subs_save_as">Guardar como</string>
+    <string name="subs_save_embed">No vídeo</string>
+    <string name="subs_save_file">Ficheiro separado (.srt)</string>
+    <string name="subs_save_both">Ambos</string>
+    <string name="subs_phone_language">%1$s (idioma do telemóvel)</string>
 </resources>
