@@ -232,7 +232,7 @@ object SiteImages {
             val (user, media) = redditPageMedia(html)
             val type = attr(html, "post-type")
             // a video post: its video (its picture is only the player's cover)
-            if (type == "video" || (media.isEmpty() && html.contains("<shreddit-player"))) {
+            if (type == "video" || type == "gif" || (media.isEmpty() && html.contains("<shreddit-player"))) {
                 return redditVideo(html, dir, user.ifBlank { "reddit" }, id, log)
             }
             if (media.isNotEmpty()) return save(media, dir, user.ifBlank { "reddit" }, id, "https://www.reddit.com/", log)
@@ -273,9 +273,15 @@ object SiteImages {
                 .maxByOrNull { it.optJSONObject("dimensions")?.optInt("height") ?: 0 }
                 ?.optString("url")?.takeIf { it.isNotBlank() }
         }
+        // a GIF post: Reddit keeps it as an mp4 without sound, turned into a real .gif afterwards
+        // (GalleryDlUtil.convertGifs, as for X)
+        val isGif = attr(html, "post-type") == "gif" ||
+            Regex("""<shreddit-player[^>]*?\s(?:is-gif|gif|ui="gif"|post-type="gif")[\s=>]""").containsMatchIn(html) ||
+            Regex("""is_?gif["']?\s*:\s*true""", RegexOption.IGNORE_CASE).containsMatchIn(unescapeHtml(html))
         if (mp4 != null) {
-            log("[reddit] video: Reddit's mp4 with sound")
-            return save(listOf(Media(mp4, "mp4")), dir, user, id, "https://www.reddit.com/", log)
+            log(if (isGif) "[reddit] GIF: Reddit's mp4 of it" else "[reddit] video: Reddit's mp4 with sound")
+            val ext = if (isGif) GalleryDlUtil.GIF_MARKER.removePrefix(".") + "mp4" else "mp4"
+            return save(listOf(Media(mp4, ext)), dir, user, id, "https://www.reddit.com/", log)
         }
 
         val hls = Regex("""<shreddit-player[^>]*?\ssrc="([^"]+)"""").find(html)?.groupValues?.get(1)?.let(::unescapeHtml)
@@ -286,7 +292,7 @@ object SiteImages {
         val ffmpeg = runCatching { RuntimeManager.ffmpegLocation }.getOrNull()
             ?.takeIf { it.isAvailable } ?: throw ExecuteException("ffmpeg isn't available for this video")
         dir.mkdirs()
-        val out = File(dir, "${user.replace(Regex("""[^\w.-]"""), "_")}_${id}_1.mp4")
+        val out = File(dir, "${user.replace(Regex("""[^\w.-]"""), "_")}_${id}_1${if (isGif) GalleryDlUtil.GIF_MARKER else "."}mp4")
         log("[download] ${out.name}")
         // (ffmpeg takes the best video and audio of the stream by itself)
         RuntimeManager.executeImpl(listOf(
@@ -488,7 +494,7 @@ object SiteImages {
             }
             // little pictures on the page that aren't the post's (Reddit's "Top 1% poster" badges,
             // flair icons…): left out
-            if (m.ext != "mp4" && isIcon(file)) {
+            if (!m.ext.endsWith("mp4") && isIcon(file)) {
                 log("[skip] ${file.name}: a small icon, not a photo of the post")
                 file.delete()
             } else {

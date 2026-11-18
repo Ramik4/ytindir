@@ -152,6 +152,7 @@ object GalleryDlUtil {
         return try {
             val count = if (reddit) SiteImages.reddit(context, url, dir, log)
                 else SiteImages.instagram(context, url, dir, includesVideos(format), log)
+            convertGifs(dir)
             done(count, "$site pages")
         } catch (e: Exception) {
             clear()
