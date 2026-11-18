@@ -701,4 +701,5 @@
     <string name="image_download_info">ينزّل كل الصور في المنشور (جميع صور المنشور المتعدد أو المعرض) باستخدام gallery-dl. يعمل مع Instagram وX (Twitter) وPinterest وFacebook وReddit وTumblr ومواقع أخرى كثيرة.</string>
     <string name="image_include_videos">تنزيل مقاطع الفيديو في المنشور أيضًا</string>
     <string name="image_directory">مجلد الصور</string>
+    <string name="image_tab_selected">لا يحتوي هذا المنشور على فيديو: تم اختيار تبويب الصور</string>
 </resources>

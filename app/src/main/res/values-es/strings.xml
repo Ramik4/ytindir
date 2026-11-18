@@ -686,4 +686,5 @@
     <string name="image_download_info">Descarga todas las imágenes de la publicación (todas las de un carrusel o galería) con gallery-dl. Funciona con Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr y muchos sitios más.</string>
     <string name="image_include_videos">Descargar también los vídeos de la publicación</string>
     <string name="image_directory">Carpeta de imágenes</string>
+    <string name="image_tab_selected">Esta publicación no tiene vídeo: se seleccionó la pestaña Imagen</string>
 </resources>

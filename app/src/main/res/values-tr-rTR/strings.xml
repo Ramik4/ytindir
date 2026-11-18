@@ -768,4 +768,5 @@
     <string name="image_download_info">Gönderideki tüm görselleri (kaydırmalı gönderi veya galerinin tamamını) gallery-dl ile indirir. Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr ve daha birçok sitede çalışır.</string>
     <string name="image_include_videos">Gönderideki videoları da indir</string>
     <string name="image_directory">Görsel klasörü</string>
+    <string name="image_tab_selected">Bu gönderide video yok: Görsel sekmesi seçildi</string>
 </resources>

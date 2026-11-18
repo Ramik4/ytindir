@@ -697,4 +697,5 @@
     <string name="image_download_info">Mengunduh semua gambar dalam postingan (semua gambar carousel atau galeri) dengan gallery-dl. Berfungsi di Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr, dan banyak situs lainnya.</string>
     <string name="image_include_videos">Unduh juga video dalam postingan</string>
     <string name="image_directory">Folder gambar</string>
+    <string name="image_tab_selected">Postingan ini tidak memiliki video: tab Gambar dipilih</string>
 </resources>

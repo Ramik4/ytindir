@@ -589,7 +589,8 @@ class DownloadWorker(
                                 }
 
                                 val nonMediaExtensions = mutableListOf<String>().apply {
-                                    addAll(context.getStringArray(R.array.thumbnail_containers_values))
+                                    // YTindir: for image downloads the pictures are the download, not thumbnails
+                                    if (!isImage) addAll(context.getStringArray(R.array.thumbnail_containers_values))
                                     addAll(
                                         context.getStringArray(R.array.sub_formats_values)
                                             .filter { it.isNotBlank() })
@@ -624,7 +625,7 @@ class DownloadWorker(
                                             if (downloadItem.title.isBlank()) {
                                                 var name = File(finalPaths.first()).nameWithoutExtension
                                                 // a carousel's files are name_1, name_2…: the post's own name
-                                                if (finalPaths.size > 1 && SocialMediaUtil.siteOf(downloadItem.url) != null) {
+                                                if ((finalPaths.size > 1 || isImage) && SocialMediaUtil.siteOf(downloadItem.url) != null) {
                                                     name = name.replace(Regex("""_\d+$"""), "")
                                                 }
                                                 if (downloadItem.playlistTitle.isBlank() || finalPaths.size == 1) downloadItem.title = name

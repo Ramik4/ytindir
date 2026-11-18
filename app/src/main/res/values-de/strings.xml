@@ -596,4 +596,5 @@
     <string name="image_download_info">Lädt alle Bilder des Beitrags (alle Bilder eines Karussells oder einer Galerie) mit gallery-dl herunter. Funktioniert mit Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr und vielen weiteren Seiten.</string>
     <string name="image_include_videos">Auch die Videos des Beitrags herunterladen</string>
     <string name="image_directory">Bilder-Ordner</string>
+    <string name="image_tab_selected">Dieser Beitrag hat kein Video: Der Tab „Bild“ wurde ausgewählt</string>
 </resources>

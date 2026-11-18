@@ -13,6 +13,11 @@ object GalleryDlUtil {
     /** Video files left out of image downloads (the Video tab gives them in better quality) */
     private val videoExtensions = listOf("mp4", "webm", "mov", "m4v", "mkv", "m3u8", "ts")
 
+    private val fileNames = listOf(
+        "instagram" to "{username}_{post_shortcode}_{num}.{extension}",
+        "twitter" to "{author[name]}_{tweet_id}_{num}.{extension}"
+    )
+
     fun imageFormat(includeVideos: Boolean) = Format(
         format_id = if (includeVideos) FORMAT_WITH_VIDEOS else FORMAT_IMAGES,
         container = "",
@@ -29,6 +34,12 @@ object GalleryDlUtil {
      */
     fun buildArgs(context: Context, preferences: SharedPreferences, url: String, format: Format, outDir: String, useCookies: Boolean): List<String> {
         val args = mutableListOf("-D", outDir)
+
+        // the same "username_postid" names as the app's other social media downloads (name_1, name_2…
+        // for a carousel) instead of gallery-dl's bare media ids
+        fileNames.forEach { (extractor, format) ->
+            args += listOf("-o", "extractor.$extractor.filename=$format")
+        }
 
         if (!includesVideos(format)) {
             args += listOf("--filter", "extension not in (${videoExtensions.joinToString(",") { "'$it'" }})")

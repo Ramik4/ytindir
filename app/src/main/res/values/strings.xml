@@ -753,4 +753,5 @@
     <string name="image_download_info">Downloads every image in the post (all images of a carousel or gallery) with gallery-dl. Works with Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr and many more sites.</string>
     <string name="image_include_videos">Also download the post\'s videos</string>
     <string name="image_directory">Image folder</string>
+    <string name="image_tab_selected">This post has no video: the Image tab is selected</string>
 </resources>

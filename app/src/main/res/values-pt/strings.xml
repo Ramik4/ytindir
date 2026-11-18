@@ -500,4 +500,5 @@
     <string name="image_download_info">Transfere todas as imagens da publicação (todas as de um carrossel ou galeria) com o gallery-dl. Funciona com Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr e muitos outros sites.</string>
     <string name="image_include_videos">Transferir também os vídeos da publicação</string>
     <string name="image_directory">Pasta de imagens</string>
+    <string name="image_tab_selected">Esta publicação não tem vídeo: o separador Imagem foi selecionado</string>
 </resources>

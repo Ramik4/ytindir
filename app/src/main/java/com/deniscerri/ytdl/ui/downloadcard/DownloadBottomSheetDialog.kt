@@ -551,7 +551,16 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
 
         lifecycleScope.launch {
             resultViewModel.uiState.collectLatest { res ->
-                if (res.errorMessage != null){
+                // YTindir: a post with only pictures (or a page yt-dlp can't read) is no error for the
+                // Image tab: go there instead of showing yt-dlp's "no video" error
+                if (res.errorMessage != null && imageTabAvailable && noVideoError.containsMatchIn(res.errorMessage!!)) {
+                    kotlin.runCatching {
+                        if (tabLayout.selectedTabPosition != 2) tabLayout.selectTab(tabLayout.getTabAt(2))
+                        if (viewPager2.currentItem != 2) viewPager2.setCurrentItem(2, false)
+                        Snackbar.make(view, getString(R.string.image_tab_selected), Snackbar.LENGTH_LONG).show()
+                    }
+                    resultViewModel.uiState.update {it.copy(errorMessage  = null) }
+                } else if (res.errorMessage != null){
                     kotlin.runCatching {
                         UiUtil.handleNoResults(requireActivity(), res.errorMessage!!,
                             url = result.url,
@@ -759,6 +768,12 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             initUpdateData()
         }
     }
+
+    // yt-dlp's errors for a post or page without a video
+    private val noVideoError = Regex(
+        "No video formats found|No video could be found|There is no video|No media found|Unsupported URL",
+        RegexOption.IGNORE_CASE
+    )
 
     private fun getDownloadItem(selectedTabPosition: Int = tabLayout.selectedTabPosition) : DownloadItem {
         return fragmentAdapter.getDownloadItem(selectedTabPosition)

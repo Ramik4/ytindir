@@ -601,4 +601,5 @@
     <string name="image_download_info">投稿内のすべての画像（カルーセルやギャラリーの全画像）を gallery-dl でダウンロードします。Instagram、X（Twitter）、Pinterest、Facebook、Reddit、Tumblr など多くのサイトに対応しています。</string>
     <string name="image_include_videos">投稿の動画もダウンロード</string>
     <string name="image_directory">画像用フォルダ</string>
+    <string name="image_tab_selected">この投稿には動画がありません：画像タブを選択しました</string>
 </resources>

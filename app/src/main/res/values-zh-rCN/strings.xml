@@ -697,4 +697,5 @@
     <string name="image_download_info">使用 gallery-dl 下载帖子中的所有图片（轮播或图集中的全部图片）。支持 Instagram、X（Twitter）、Pinterest、Facebook、Reddit、Tumblr 等众多网站。</string>
     <string name="image_include_videos">同时下载帖子中的视频</string>
     <string name="image_directory">图片文件夹</string>
+    <string name="image_tab_selected">此帖子没有视频：已选择图片标签</string>
 </resources>
