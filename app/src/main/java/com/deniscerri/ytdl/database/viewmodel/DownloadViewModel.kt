@@ -42,6 +42,7 @@ import com.deniscerri.ytdl.util.LocaleUtil
 import com.deniscerri.ytdl.util.Extensions.needsDataUpdating
 import com.deniscerri.ytdl.util.Extensions.toListString
 import com.deniscerri.ytdl.util.FileUtil
+import com.deniscerri.ytdl.util.GalleryDlUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.NotificationUtil
 import com.deniscerri.ytdl.util.extractors.ytdlp.YTDLPUtil
@@ -280,6 +281,7 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
         val downloadPath = when(type){
             DownloadType.audio -> sharedPreferences.getString("music_path", FileUtil.getDefaultAudioPath())
             DownloadType.video -> sharedPreferences.getString("video_path",  FileUtil.getDefaultVideoPath())
+            DownloadType.image -> sharedPreferences.getString("image_path", FileUtil.getDefaultImagePath())
             else -> sharedPreferences.getString("command_path", FileUtil.getDefaultCommandPath())
         }
 
@@ -481,6 +483,7 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
             DownloadType.audio -> FileUtil.getDefaultAudioPath()
             DownloadType.video -> FileUtil.getDefaultVideoPath()
             DownloadType.command -> FileUtil.getDefaultCommandPath()
+            DownloadType.image -> FileUtil.getDefaultImagePath()
             else -> ""
         }
 
@@ -586,6 +589,8 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
                     }
                 )
             }
+            // YTindir: images go through gallery-dl, which has no format list
+            DownloadType.image -> return GalleryDlUtil.defaultFormat(sharedPreferences)
             else -> {
                 val preferredCommandTemplates = commandTemplateDao.getPreferredCommandTemplates()
                 var template : CommandTemplate? = null

@@ -597,4 +597,8 @@
     <string name="custom_channels_summary">自分の yt-dlp リリースリポジトリから更新</string>
     <string name="auto_update_gallery_dl">gallery-dl の自動更新</string>
     <string name="auto_update_gallery_dl_summary">gallery-dl は画像やギャラリーをダウンロードします。サイトは頻繁に変わるため、最新に保つことで画像のダウンロードが動作し続けます。アップデートは PyPI（安定版）または gallery-dl の GitHub リポジトリ（master）から取得されます。</string>
+    <string name="image">画像</string>
+    <string name="image_download_info">投稿内のすべての画像（カルーセルやギャラリーの全画像）を gallery-dl でダウンロードします。Instagram、X（Twitter）、Pinterest、Facebook、Reddit、Tumblr など多くのサイトに対応しています。</string>
+    <string name="image_include_videos">投稿の動画もダウンロード</string>
+    <string name="image_directory">画像用フォルダ</string>
 </resources>

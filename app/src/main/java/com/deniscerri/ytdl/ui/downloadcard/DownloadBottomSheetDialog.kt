@@ -183,7 +183,8 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             withContext(Dispatchers.IO){
                 commandTemplateNr = commandTemplateViewModel.getTotalNumber()
                 if (!Patterns.WEB_URL.matcher(result.url).matches()) commandTemplateNr++
-                if(commandTemplateNr <= 0){
+                // YTindir: for links the third tab is Image, which needs no template
+                if(commandTemplateNr <= 0 && !Patterns.WEB_URL.matcher(result.url).matches()){
                     (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.isClickable = true
                     (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.alpha = 0.3f
                 }
@@ -197,6 +198,8 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(1)?.isClickable = true
             (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(1)?.alpha = 0.3f
         }
+
+        val imageTabAvailable = Patterns.WEB_URL.matcher(result.url).matches() && !result.url.isYoutubeURL()
 
         //remove outdated player url of 1hr so it can refetch it in the cut player
         if (result.creationTime > System.currentTimeMillis() - 3600000) result.urls = ""
@@ -216,7 +219,8 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             currentDownloadItem,
             nonSpecific = result.url.endsWith(".txt"),
             isIncognito = incognito,
-            showCommand = !Patterns.WEB_URL.matcher(result.url).matches()
+            showCommand = !Patterns.WEB_URL.matcher(result.url).matches(),
+            showImage = imageTabAvailable
         )
 
         viewPager2.adapter = fragmentAdapter
@@ -238,6 +242,12 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                         viewPager2.setCurrentItem(1, false)
                     }
                 }
+                DownloadType.image -> {
+                    // YTindir: the Image tab (gallery-dl) only exists for links
+                    val imageTab = if (imageTabAvailable) 2 else if (isAudioOnly) 0 else 1
+                    tabLayout.getTabAt(imageTab)!!.select()
+                    viewPager2.setCurrentItem(imageTab, false)
+                }
                 else -> {
                     if (Patterns.WEB_URL.matcher(result.url).matches()) {
                         // YTindir: no command downloads for links, fall back to video (or audio)
@@ -253,8 +263,14 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                 }
             }
 
-            // YTindir: hide the command tab for normal links
-            if (Patterns.WEB_URL.matcher(result.url).matches()) {
+            // YTindir: for normal links the command tab becomes the Image tab (gallery-dl);
+            // gallery-dl has nothing for YouTube, so there it stays hidden
+            if (imageTabAvailable) {
+                tabLayout.getTabAt(2)?.apply {
+                    setText(R.string.image)
+                    setIcon(R.drawable.ic_image)
+                }
+            } else if (Patterns.WEB_URL.matcher(result.url).matches()) {
                 (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
             }
 
@@ -279,7 +295,7 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (tab!!.position == 2 && commandTemplateNr == 0){
+                if (tab!!.position == 2 && commandTemplateNr == 0 && !Patterns.WEB_URL.matcher(result.url).matches()){
                     tabLayout.selectTab(tabLayout.getTabAt(1))
                     val s = Snackbar.make(view, getString(R.string.add_template_first), Snackbar.LENGTH_LONG)
                     val snackbarView: View = s.view
@@ -322,7 +338,9 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                 runCatching {
                     sharedPreferences.edit(commit = true) {
                         putString("last_used_download_type",
-                            listOf(DownloadType.audio, DownloadType.video, DownloadType.command)[position].toString())
+                            listOf(DownloadType.audio, DownloadType.video,
+                                if (Patterns.WEB_URL.matcher(result.url).matches()) DownloadType.image else DownloadType.command
+                            )[position].toString())
                     }
                     fragmentAdapter.updateWhenSwitching(viewPager2.currentItem)
                 }

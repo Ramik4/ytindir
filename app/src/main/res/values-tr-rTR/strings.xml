@@ -764,4 +764,8 @@
     <string name="powered_by">Altyapı</string>
     <string name="auto_update_gallery_dl">gallery-dl\'yi otomatik güncelle</string>
     <string name="auto_update_gallery_dl_summary">gallery-dl görselleri ve galerileri indirir. Siteler sık değiştiği için güncel tutmak görsel indirmelerin çalışmaya devam etmesini sağlar. Veriler PyPI\'den (kararlı) veya gallery-dl\'nin GitHub deposundan (master) alınır.</string>
+    <string name="image">Görsel</string>
+    <string name="image_download_info">Gönderideki tüm görselleri (kaydırmalı gönderi veya galerinin tamamını) gallery-dl ile indirir. Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr ve daha birçok sitede çalışır.</string>
+    <string name="image_include_videos">Gönderideki videoları da indir</string>
+    <string name="image_directory">Görsel klasörü</string>
 </resources>

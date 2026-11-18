@@ -23,6 +23,9 @@ import com.afollestad.materialdialogs.utils.MDUtil.getStringArray
 import com.deniscerri.ytdl.App
 import com.deniscerri.ytdl.MainActivity
 import com.deniscerri.ytdl.R
+import com.deniscerri.ytdl.core.GalleryDl
+import com.deniscerri.ytdl.core.models.ExecuteException
+import com.deniscerri.ytdl.util.GalleryDlUtil
 import com.deniscerri.ytdl.core.RuntimeManager
 import com.deniscerri.ytdl.database.DBManager
 import com.deniscerri.ytdl.database.enums.DownloadType
@@ -282,12 +285,21 @@ class DownloadWorker(
                         val targetDir = File(FileUtil.formatPath(downloadItem.downloadPath))
                         val cacheDownloads = sharedPreferences.getBoolean("cache_downloads", true)
                         val writtenPath = downloadItem.type == DownloadType.command && downloadItem.format.format_note.contains("-P ")
-                        val writeDirectly = writtenPath || (!cacheDownloads && targetDir.canWrite())
+                        // YTindir: gallery-dl always downloads into the temporary folder, then the files are moved
+                        val isImage = downloadItem.type == DownloadType.image
+                        val writeDirectly = !isImage && (writtenPath || (!cacheDownloads && targetDir.canWrite()))
                         val cleanFileNames = downloadItem.type != DownloadType.command &&
                                 sharedPreferences.getBoolean("clean_filenames", true)
 
 
-                        val commandString = ytdlpUtil.parseYTDLRequestString(request)
+                        val galleryDlArgs = if (isImage) {
+                            GalleryDlUtil.buildArgs(
+                                context, sharedPreferences, downloadItem.url, downloadItem.format,
+                                tempFileDir.absolutePath, ytdlpUtil.useCookiesFor(downloadItem.url)
+                            )
+                        } else null
+                        val commandString = galleryDlArgs?.let { a -> GalleryDlUtil.commandString(a) }
+                            ?: ytdlpUtil.parseYTDLRequestString(request)
                         val initialLogDetails = "Downloading:\n" +
                                 "Title: ${downloadItem.title}\n" +
                                 "URL: ${downloadItem.url}\n" +
@@ -313,12 +325,7 @@ class DownloadWorker(
 
                         runCatching {
                             RuntimeManager.getInstance().destroyProcessById(downloadItem.id.toString())
-                            RuntimeManager.getInstance().execute(
-                                request = request,
-                                processId = downloadItem.id.toString(),
-                                redirectErrorStream = true,
-                                usingCacheDir = true
-                            ) { progress, _, line ->
+                            val onOutput: (Float, Long, String) -> Unit = { progress, _, line ->
                                 WorkerEventBus.post(
                                     WorkerProgress(
                                         progress.toInt(),
@@ -344,6 +351,28 @@ class DownloadWorker(
                                     }
                                     logString.append("$line\n")
                                 }
+                            }
+                            if (galleryDlArgs != null) {
+                                val response = GalleryDl.execute(
+                                    context, galleryDlArgs,
+                                    processId = downloadItem.id.toString(),
+                                    redirectErrorStream = true,
+                                    callback = onOutput
+                                )
+                                // gallery-dl can end without an error and without a file (nothing it could read)
+                                if (tempFileDir.walkTopDown().none { f -> f.isFile }) {
+                                    throw ExecuteException(response.out.ifBlank { "gallery-dl" } +
+                                        "\nNo images were found in this post")
+                                }
+                                response
+                            } else {
+                                RuntimeManager.getInstance().execute(
+                                    request = request,
+                                    processId = downloadItem.id.toString(),
+                                    redirectErrorStream = true,
+                                    usingCacheDir = true,
+                                    callback = onOutput
+                                )
                             }
                         }.onSuccess {
                             notificationUtil.clearNotificationThrottleState(downloadItem.id.toInt())
@@ -720,7 +749,21 @@ class DownloadWorker(
                             // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was
                             // actually installed, and only once per item, so it can never loop.
-                            if (sharedPreferences.getBoolean("auto_update_ytdlp", true)
+                            // (gallery-dl for images: updated the same way)
+                            if (isImage && sharedPreferences.getBoolean(GalleryDl.AUTO_UPDATE_KEY, true)
+                                && recoveryAttempted.add(downloadItem.id)) {
+                                val updateRes = UpdateUtil(context).updateGalleryDl()
+                                if (updateRes.status == UpdateUtil.YTDLPUpdateStatus.DONE) {
+                                    tempFileDir.deleteRecursively()
+                                    val note = "\n[YTindir] ${it.message?.lines()?.lastOrNull { l -> l.isNotBlank() } ?: "Error"}\n" +
+                                        "[YTindir] ${updateRes.message}. Retrying download...\n"
+                                    if (logDownloads) logRepo.update(note, logItem.id)
+                                    downloadItem.status = DownloadRepository.Status.Queued.toString()
+                                    dao.update(downloadItem)
+                                    return@onFailure
+                                }
+                            }
+                            if (!isImage && sharedPreferences.getBoolean("auto_update_ytdlp", true)
                                 && recoveryAttempted.add(downloadItem.id)
                                 && dao.getActiveDownloadsList().count { a -> a.id != downloadItem.id } == 0) {
                                 val updateRes = runCatching { UpdateUtil(context).updateYTDL() }.getOrNull()

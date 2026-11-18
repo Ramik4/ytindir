@@ -690,4 +690,8 @@
     <string name="save_lrc_file_summary">Salva a letra sincronizada como arquivo .lrc junto ao áudio</string>
     <string name="auto_update_gallery_dl">Atualizar gallery-dl automaticamente</string>
     <string name="auto_update_gallery_dl_summary">O gallery-dl baixa imagens e galerias. Os sites mudam com frequência, então mantê-lo atualizado faz os downloads de imagens continuarem funcionando. Os dados vêm do PyPI (estável) ou do repositório GitHub do gallery-dl (master).</string>
+    <string name="image">Imagem</string>
+    <string name="image_download_info">Baixa todas as imagens da publicação (todas as de um carrossel ou galeria) com o gallery-dl. Funciona com Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr e muitos outros sites.</string>
+    <string name="image_include_videos">Baixar também os vídeos da publicação</string>
+    <string name="image_directory">Pasta de imagens</string>
 </resources>

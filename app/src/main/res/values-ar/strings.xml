@@ -697,4 +697,8 @@
     <string name="custom_channels_summary">التحديث من مستودعات yt-dlp الخاصة بك</string>
     <string name="auto_update_gallery_dl">تحديث تلقائي لـ gallery-dl</string>
     <string name="auto_update_gallery_dl_summary">يقوم gallery-dl بتنزيل الصور والمعارض. تتغير المواقع كثيرًا، لذا فإن إبقاءه محدّثًا يضمن استمرار عمل تنزيل الصور. يتم جلب البيانات من PyPI (المستقر) أو من مستودع gallery-dl على GitHub (master).</string>
+    <string name="image">صورة</string>
+    <string name="image_download_info">ينزّل كل الصور في المنشور (جميع صور المنشور المتعدد أو المعرض) باستخدام gallery-dl. يعمل مع Instagram وX (Twitter) وPinterest وFacebook وReddit وTumblr ومواقع أخرى كثيرة.</string>
+    <string name="image_include_videos">تنزيل مقاطع الفيديو في المنشور أيضًا</string>
+    <string name="image_directory">مجلد الصور</string>
 </resources>

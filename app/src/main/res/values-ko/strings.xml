@@ -682,4 +682,8 @@
     <string name="crop_unsupported">이 항목은 자르기 작업을 지원하지 않습니다</string>
     <string name="auto_update_gallery_dl">gallery-dl 자동 업데이트</string>
     <string name="auto_update_gallery_dl_summary">gallery-dl은 이미지와 갤러리를 다운로드합니다. 사이트가 자주 바뀌므로 최신 상태로 유지해야 이미지 다운로드가 계속 작동합니다. 데이터는 PyPI(안정) 또는 gallery-dl의 GitHub 저장소(master)에서 가져옵니다.</string>
+    <string name="image">이미지</string>
+    <string name="image_download_info">게시물의 모든 이미지(캐러셀이나 갤러리의 전체 이미지)를 gallery-dl로 다운로드합니다. Instagram, X(Twitter), Pinterest, Facebook, Reddit, Tumblr 등 많은 사이트에서 작동합니다.</string>
+    <string name="image_include_videos">게시물의 동영상도 다운로드</string>
+    <string name="image_directory">이미지 폴더</string>
 </resources>

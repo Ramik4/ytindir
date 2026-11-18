@@ -749,4 +749,8 @@
     <string name="quick_original_size">Original size</string>
     <string name="quick_thumbnail_saved">Thumbnail saved</string>
     <string name="powered_by">Powered by</string>
+    <string name="image">Image</string>
+    <string name="image_download_info">Downloads every image in the post (all images of a carousel or gallery) with gallery-dl. Works with Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr and many more sites.</string>
+    <string name="image_include_videos">Also download the post\'s videos</string>
+    <string name="image_directory">Image folder</string>
 </resources>

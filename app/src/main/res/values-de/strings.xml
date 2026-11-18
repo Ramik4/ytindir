@@ -592,4 +592,8 @@
     <string name="custom_channels_summary">Aus eigenen yt-dlp-Release-Repositorys aktualisieren</string>
     <string name="auto_update_gallery_dl">gallery-dl automatisch aktualisieren</string>
     <string name="auto_update_gallery_dl_summary">gallery-dl lädt Bilder und Galerien herunter. Webseiten ändern sich oft, daher sorgen Updates dafür, dass Bild-Downloads weiter funktionieren. Die Daten stammen von PyPI (Stabil) oder aus dem GitHub-Repository von gallery-dl (Master).</string>
+    <string name="image">Bild</string>
+    <string name="image_download_info">Lädt alle Bilder des Beitrags (alle Bilder eines Karussells oder einer Galerie) mit gallery-dl herunter. Funktioniert mit Instagram, X (Twitter), Pinterest, Facebook, Reddit, Tumblr und vielen weiteren Seiten.</string>
+    <string name="image_include_videos">Auch die Videos des Beitrags herunterladen</string>
+    <string name="image_directory">Bilder-Ordner</string>
 </resources>
