@@ -687,5 +687,4 @@
     <string name="image_download_notes">• Los GIF se descargan como archivos .gif (X, Pinterest, Reddit).\n• Con el interruptor activado, los vídeos llegan con sonido en un solo mp4. Una publicación de vídeo de Reddit siempre da su vídeo.\n• Las historias de Instagram, las cuentas privadas y algunos sitios requieren iniciar sesión: hazlo en Más → Cookies y activa las cookies.</string>
     <string name="image_include_videos">Descargar también los vídeos de la publicación</string>
     <string name="image_directory">Carpeta de imágenes</string>
-    <string name="image_tab_selected">Esta publicación no tiene vídeo: se seleccionó la pestaña Imagen</string>
 </resources>

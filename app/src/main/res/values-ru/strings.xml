@@ -784,5 +784,4 @@
     <string name="image_download_notes">• GIF скачиваются как файлы .gif (X, Pinterest, Reddit).\n• Если переключатель включён, видео скачиваются со звуком одним mp4. Видеопост Reddit всегда даёт своё видео.\n• Истории Instagram, закрытые аккаунты и некоторые сайты требуют входа: войдите в Ещё → Cookies и включите cookies.</string>
     <string name="image_include_videos">Также скачивать видео из публикации</string>
     <string name="image_directory">Папка для изображений</string>
-    <string name="image_tab_selected">В этой публикации нет видео: выбрана вкладка «Изображение»</string>
 </resources>

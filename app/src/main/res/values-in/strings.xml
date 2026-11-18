@@ -698,5 +698,4 @@
     <string name="image_download_notes">• GIF diunduh sebagai file .gif (X, Pinterest, Reddit).\n• Jika sakelar aktif, video diunduh dengan suara dalam satu mp4. Postingan video Reddit selalu memberikan videonya.\n• Story Instagram, akun privat, dan beberapa situs memerlukan login: masuk di Lainnya → Cookie lalu aktifkan cookie.</string>
     <string name="image_include_videos">Unduh juga video dalam postingan</string>
     <string name="image_directory">Folder gambar</string>
-    <string name="image_tab_selected">Postingan ini tidak memiliki video: tab Gambar dipilih</string>
 </resources>

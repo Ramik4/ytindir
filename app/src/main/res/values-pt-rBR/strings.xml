@@ -695,5 +695,4 @@
     <string name="image_download_notes">• GIFs são baixados como arquivos .gif (X, Pinterest, Reddit).\n• Com a chave ligada, os vídeos vêm com som em um único mp4. Uma postagem de vídeo do Reddit sempre baixa o vídeo.\n• Stories do Instagram, contas privadas e alguns sites exigem login: entre em Mais → Cookies e ative os cookies.</string>
     <string name="image_include_videos">Baixar também os vídeos da publicação</string>
     <string name="image_directory">Pasta de imagens</string>
-    <string name="image_tab_selected">Esta publicação não tem vídeo: a aba Imagem foi selecionada</string>
 </resources>

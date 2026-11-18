@@ -698,5 +698,4 @@
     <string name="image_download_notes">• GIF 以 .gif 文件下载（X、Pinterest、Reddit）。\n• 开关打开时，视频带声音合并为一个 mp4。Reddit 视频帖子总是下载视频。\n• Instagram 快拍、私密账号和部分网站需要登录：在 更多 → Cookies 中登录并开启 Cookies。</string>
     <string name="image_include_videos">同时下载帖子中的视频</string>
     <string name="image_directory">图片文件夹</string>
-    <string name="image_tab_selected">此帖子没有视频：已选择图片标签</string>
 </resources>

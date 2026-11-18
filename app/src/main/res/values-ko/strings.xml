@@ -687,5 +687,4 @@
     <string name="image_download_notes">• GIF는 .gif 파일로 저장됩니다(X, Pinterest, Reddit).\n• 스위치를 켜면 동영상이 소리와 함께 하나의 mp4로 저장됩니다. Reddit 동영상 게시물은 항상 동영상을 저장합니다.\n• Instagram 스토리, 비공개 계정, 일부 사이트는 로그인이 필요합니다: 더보기 → 쿠키에서 로그인하고 쿠키를 켜세요.</string>
     <string name="image_include_videos">게시물의 동영상도 다운로드</string>
     <string name="image_directory">이미지 폴더</string>
-    <string name="image_tab_selected">이 게시물에는 동영상이 없습니다: 이미지 탭이 선택되었습니다</string>
 </resources>

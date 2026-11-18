@@ -756,5 +756,4 @@
     <string name="image_download_notes">• GIFs come as .gif files (X, Pinterest, Reddit).\n• With the switch on, videos come with their sound as one mp4. A Reddit video post always gives its video.\n• Instagram stories, private accounts and some sites need a login: log in under More → Cookies and turn Cookies on.</string>
     <string name="image_include_videos">Also download the post\'s videos</string>
     <string name="image_directory">Image folder</string>
-    <string name="image_tab_selected">This post has no video: the Image tab is selected</string>
 </resources>

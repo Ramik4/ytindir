@@ -597,5 +597,4 @@
     <string name="image_download_notes">• GIFs werden als .gif-Dateien geladen (X, Pinterest, Reddit).\n• Mit dem Schalter kommen Videos mit Ton als eine mp4. Ein Reddit-Videobeitrag liefert immer sein Video.\n• Instagram-Storys, private Konten und manche Seiten brauchen eine Anmeldung: unter Mehr → Cookies anmelden und Cookies einschalten.</string>
     <string name="image_include_videos">Auch die Videos des Beitrags herunterladen</string>
     <string name="image_directory">Bilder-Ordner</string>
-    <string name="image_tab_selected">Dieser Beitrag hat kein Video: Der Tab „Bild“ wurde ausgewählt</string>
 </resources>

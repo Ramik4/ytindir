@@ -771,5 +771,4 @@
     <string name="image_download_notes">• GIF\'ler .gif dosyası olarak iner (X, Pinterest, Reddit).\n• Anahtar açıksa videolar sesiyle tek mp4 olarak iner. Reddit\'teki video gönderilerinde video her zaman iner.\n• Instagram hikâyeleri, gizli hesaplar ve bazı siteler giriş ister: Daha Fazla → Çerezler\'den giriş yapıp çerezleri aç.</string>
     <string name="image_include_videos">Gönderideki videoları da indir</string>
     <string name="image_directory">Görsel klasörü</string>
-    <string name="image_tab_selected">Bu gönderide video yok: Görsel sekmesi seçildi</string>
 </resources>

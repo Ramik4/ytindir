@@ -702,5 +702,4 @@
     <string name="image_download_notes">• تُنزَّل صور GIF كملفات ‎.gif (X وPinterest وReddit).\n• عند تشغيل المفتاح تُنزَّل مقاطع الفيديو مع الصوت في ملف mp4 واحد. منشور الفيديو على Reddit يعطي الفيديو دائمًا.\n• قصص Instagram والحسابات الخاصة وبعض المواقع تتطلب تسجيل الدخول: سجّل الدخول من المزيد ← ملفات تعريف الارتباط وفعّلها.</string>
     <string name="image_include_videos">تنزيل مقاطع الفيديو في المنشور أيضًا</string>
     <string name="image_directory">مجلد الصور</string>
-    <string name="image_tab_selected">لا يحتوي هذا المنشور على فيديو: تم اختيار تبويب الصور</string>
 </resources>
