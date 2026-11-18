@@ -712,6 +712,7 @@
     <string name="hint_youtube_bot">YouTube wants to make sure you\'re not a bot. Add your YouTube account in More → Cookies and turn Cookies on, or try again a bit later.</string>
     <string name="hint_age_restricted">This video is age-restricted. Add an account that can watch it in More → Cookies and turn Cookies on.</string>
     <string name="hint_private">This video or account is private. It can only be downloaded with an account that can see it, added in More → Cookies.</string>
+    <string name="hint_instagram_login">Instagram didn\'t show this post without a login. Log in to Instagram in More → Cookies and turn Cookies on, then try again.</string>
     <string name="hint_reddit_login">Reddit now shows posts only to logged-in accounts. Log in to Reddit in More → Cookies and turn Cookies on.</string>
     <string name="hint_login_required">This content needs an account. Log in to the site in More → Cookies and turn Cookies on.</string>
     <string name="hint_geo_blocked">This video isn\'t available in your country. A VPN (or a proxy in Settings → Downloads) can help.</string>

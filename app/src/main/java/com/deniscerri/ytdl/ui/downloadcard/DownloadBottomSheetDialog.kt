@@ -44,6 +44,7 @@ import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.receiver.ShareActivity
 import com.deniscerri.ytdl.ui.BaseActivity
 import com.deniscerri.ytdl.ui.more.cookies.WebViewActivity
+import com.deniscerri.ytdl.util.SiteImages
 import com.deniscerri.ytdl.util.UiUtil
 import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -553,7 +554,9 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             resultViewModel.uiState.collectLatest { res ->
                 // YTindir: a post with only pictures (or a page yt-dlp can't read) is no error for the
                 // Image tab: go there instead of showing yt-dlp's "no video" error
-                if (res.errorMessage != null && imageTabAvailable && noVideoError.containsMatchIn(res.errorMessage!!)) {
+                if (res.errorMessage != null && imageTabAvailable && (noVideoError.containsMatchIn(res.errorMessage!!) ||
+                        (blockedPostError.containsMatchIn(res.errorMessage!!) &&
+                            (SiteImages.isInstagramPost(result.url) || SiteImages.isReddit(result.url))))) {
                     kotlin.runCatching {
                         if (tabLayout.selectedTabPosition != 2) tabLayout.selectTab(tabLayout.getTabAt(2))
                         if (viewPager2.currentItem != 2) viewPager2.setCurrentItem(2, false)
@@ -772,6 +775,13 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
     // yt-dlp's errors for a post or page without a video
     private val noVideoError = Regex(
         "No video formats found|No video could be found|There is no video|No media found|Unsupported URL",
+        RegexOption.IGNORE_CASE
+    )
+
+    // yt-dlp's errors when Instagram or Reddit won't give it the post without a login: the Image
+    // tab reads the post its own way (its pages as the phone's browser gets them)
+    private val blockedPostError = Regex(
+        "Failed to parse JSON|Account authentication is required|403: Blocked",
         RegexOption.IGNORE_CASE
     )
 

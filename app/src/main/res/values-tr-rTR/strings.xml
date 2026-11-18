@@ -702,6 +702,7 @@
     <string name="hint_youtube_bot">YouTube bot olmadığını doğrulamak istiyor. Daha Fazla → Çerezler\'den YouTube hesabını ekleyip çerezleri aç ya da biraz sonra tekrar dene.</string>
     <string name="hint_age_restricted">Bu videoda yaş sınırı var. İzleyebilen bir hesabı Daha Fazla → Çerezler\'den ekleyip çerezleri aç.</string>
     <string name="hint_private">Bu video ya da hesap gizli. Yalnızca onu görebilen bir hesapla, Daha Fazla → Çerezler\'den eklenerek indirilebilir.</string>
+    <string name="hint_instagram_login">Instagram bu gönderiyi giriş yapmadan göstermedi. Daha Fazla → Çerezler\'den Instagram\'a giriş yapıp çerezleri aç, sonra tekrar dene.</string>
     <string name="hint_reddit_login">Reddit artık gönderileri yalnızca giriş yapmış hesaplara gösteriyor. Daha Fazla → Çerezler\'den Reddit\'e giriş yapıp çerezleri aç.</string>
     <string name="hint_login_required">Bu içerik için hesap gerekiyor. Daha Fazla → Çerezler\'den siteye giriş yapıp çerezleri aç.</string>
     <string name="hint_geo_blocked">Bu video senin ülkende kullanılamıyor. VPN (ya da Ayarlar → İndirmeler\'deki proxy) işe yarayabilir.</string>

@@ -1,6 +1,13 @@
 package com.deniscerri.ytdl.util
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Base64
+import android.webkit.CookieManager
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.deniscerri.ytdl.core.models.ExecuteException
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -11,14 +18,18 @@ import org.json.JSONObject
 import org.json.JSONTokener
 import java.io.File
 import java.util.UUID
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
  * YTindir: the Image tab's own ways into Instagram and Reddit, for when gallery-dl can't get in:
  * - Instagram: gallery-dl reads posts only with a logged-in account ("HTTP redirect to login
- *   page" without one); the post's embed page gives its photos to logged-out visitors too.
- * - Reddit: its website API wants a login ("Account authentication is required") and gallery-dl's
- *   app id is refused ("401: Unauthorized"); Reddit's Android app gets a token without a login.
+ *   page" without one); the post's embed page and the post page itself give logged-out visitors
+ *   its photos too
+ * - Reddit: its API wants a login ("Account authentication is required") and refuses gallery-dl's
+ *   app id ("401: Unauthorized"); a real browser still gets the post's JSON
+ * Both sites block requests that don't come from a browser, so the pages are also opened in a
+ * hidden WebView (the phone's own Chrome, with the cookies of More → Cookies' browser).
  * Files are named like the other social media downloads: user_postid_1.jpg, user_postid_2.jpg…
  */
 object SiteImages {
@@ -33,6 +44,7 @@ object SiteImages {
 
     private val instagramRegex = Regex("""instagram\.com/(?:[\w.]+/)?(?:p|reel|reels|tv)/([\w-]+)""", RegexOption.IGNORE_CASE)
     private val redditRegex = Regex("""(?:^|[/.])(?:reddit\.com|redd\.it)(?:/|$)""", RegexOption.IGNORE_CASE)
+    private val redditShareRegex = Regex("""reddit\.com/(?:r|u|user)/[\w-]+/s/\w+""", RegexOption.IGNORE_CASE)
 
     fun isInstagramPost(url: String) = instagramRegex.containsMatchIn(url)
     fun isReddit(url: String) = redditRegex.containsMatchIn(url)
@@ -42,44 +54,98 @@ object SiteImages {
     // ---------------------------------------------------------------- Instagram
 
     /** Downloads the photos (and with [includeVideos] the videos) of an Instagram post into [dir]. */
-    fun instagram(url: String, dir: File, includeVideos: Boolean, log: (String) -> Unit): Int {
+    fun instagram(context: Context, url: String, dir: File, includeVideos: Boolean, log: (String) -> Unit): Int {
         val code = instagramRegex.find(url)?.groupValues?.get(1)
             ?: throw ExecuteException("Not an Instagram post link")
-        log("[instagram-embed] $code: reading the post's embed page")
-        val page = get("https://www.instagram.com/p/$code/embed/captioned/", BROWSER_UA)
-            ?: throw ExecuteException("Instagram's embed page couldn't be loaded")
+        val embedUrl = "https://www.instagram.com/p/$code/embed/captioned/"
+        val attempts = listOf<Pair<String, () -> String?>>(
+            "embed page" to { get(embedUrl, BROWSER_UA) },
+            "post page in the browser" to { webPage(context, "https://www.instagram.com/p/$code/", 3000) },
+            "embed page in the browser" to { webPage(context, embedUrl, 3000) },
+        )
+        for ((name, load) in attempts) {
+            log("[instagram] $code: reading the $name")
+            val page = runCatching { load() }.getOrNull()
+            if (page.isNullOrBlank()) {
+                log("[instagram] the $name couldn't be loaded")
+                continue
+            }
+            val (user, media) = instagramMedia(page, code, includeVideos)
+            if (media.isNotEmpty()) {
+                return save(media, dir, user.ifBlank { "instagram" }, code, "https://www.instagram.com/", log)
+            }
+            log("[instagram] no photos in the $name (${describe(page)})")
+        }
+        throw ExecuteException("Instagram didn't show this post's photos without a login")
+    }
 
-        var user = ""
-        val media = mutableListOf<Media>()
+    /** What a page that had no photos was, for the log. */
+    private fun describe(page: String): String {
+        val title = Regex("""<title[^>]*>([^<]*)</title>""").find(page)?.groupValues?.get(1)?.trim().orEmpty()
+        val marks = listOf("contextJSON", "gql_data", "shortcode_media", "EmbeddedMedia", "web_info", "image_versions2",
+            "display_url", "accounts/login", "challenge").filter { page.contains(it) }
+        return "${page.length / 1024} KB, title \"${title.take(60)}\", has: ${marks.joinToString().ifEmpty { "-" }}"
+    }
 
-        contextJson(page)?.optJSONObject("gql_data")?.optJSONObject("shortcode_media")?.let { post ->
-            user = post.optJSONObject("owner")?.optString("username").orEmpty()
-            val nodes = post.optJSONObject("edge_sidecar_to_children")?.optJSONArray("edges")
-                ?.let { edges -> (0 until edges.length()).mapNotNull { edges.optJSONObject(it)?.optJSONObject("node") } }
-                ?: listOf(post)
-            nodes.forEach { node ->
-                if (node.optBoolean("is_video")) {
-                    if (includeVideos) node.optString("video_url").takeIf { it.isNotBlank() }?.let { media += Media(it, "mp4") }
-                } else {
-                    bestImage(node)?.let { media += Media(it, extOf(it, "jpg")) }
+    private fun instagramMedia(page: String, code: String, includeVideos: Boolean): Pair<String, List<Media>> {
+        // 1. the post page's data (logged-out web: xdt_api__v1__media__shortcode__web_info)
+        jsonAfter(page, "\"xdt_api__v1__media__shortcode__web_info\":")?.let { info ->
+            val item = info.optJSONArray("items")?.optJSONObject(0)
+            if (item != null && (item.optString("code").isEmpty() || item.optString("code") == code)) {
+                val user = item.optJSONObject("user")?.optString("username").orEmpty()
+                val nodes = item.optJSONArray("carousel_media")?.let { a -> (0 until a.length()).mapNotNull { a.optJSONObject(it) } }
+                    ?: listOf(item)
+                val media = nodes.mapNotNull { node ->
+                    val video = node.optJSONArray("video_versions")?.optJSONObject(0)?.optString("url")
+                    if (node.optInt("media_type") == 2 && !video.isNullOrBlank()) {
+                        if (includeVideos) Media(video, "mp4") else null
+                    } else {
+                        largestCandidate(node)?.let { Media(it, extOf(it, "jpg")) }
+                    }
                 }
+                if (media.isNotEmpty()) return user to media
             }
         }
 
-        // embed pages without the post data: the photo shown on the page
-        if (media.isEmpty()) {
-            val img = Regex("""class="EmbeddedMediaImage"[^>]*?src="([^"]+)"""").find(page)?.groupValues?.get(1)
-                ?: Regex("""<img[^>]+class="EmbeddedMediaImage"[^>]*>""").find(page)?.value
-                    ?.let { tag -> Regex("""src="([^"]+)"""").find(tag)?.groupValues?.get(1) }
-            img?.let { media += Media(unescapeHtml(it), extOf(unescapeHtml(it), "jpg")) }
+        // 2. the embed page's data ("contextJSON" → gql_data.shortcode_media)
+        val gql = contextJson(page)?.optJSONObject("gql_data")?.optJSONObject("shortcode_media")
+            ?: jsonAfter(page, "\"shortcode_media\":")
+        gql?.let { post ->
+            val user = post.optJSONObject("owner")?.optString("username").orEmpty()
+            val nodes = post.optJSONObject("edge_sidecar_to_children")?.optJSONArray("edges")
+                ?.let { edges -> (0 until edges.length()).mapNotNull { edges.optJSONObject(it)?.optJSONObject("node") } }
+                ?: listOf(post)
+            val media = nodes.mapNotNull { node ->
+                if (node.optBoolean("is_video")) {
+                    node.optString("video_url").takeIf { includeVideos && it.isNotBlank() }?.let { Media(it, "mp4") }
+                } else {
+                    bestImage(node)?.let { Media(it, extOf(it, "jpg")) }
+                }
+            }
+            if (media.isNotEmpty()) return user to media
         }
-        if (user.isBlank()) {
-            user = Regex("""class="UsernameText"[^>]*>([^<]+)<""").find(page)?.groupValues?.get(1)?.trim().orEmpty()
-        }
-        if (media.isEmpty()) throw ExecuteException("Instagram's embed page has no photos for this post (it may be private or need a login)")
 
-        return save(media, dir, user.ifBlank { "instagram" }, code, "https://www.instagram.com/", log)
+        // 3. the photos shown on the page (post photos have "-15/" in their path, profile pictures "-19/")
+        val user = Regex("""class="UsernameText"[^>]*>([^<]+)<""").find(page)?.groupValues?.get(1)?.trim().orEmpty()
+        val seen = mutableSetOf<String>()
+        val media = Regex("""<img\b[^>]*>""").findAll(page).mapNotNull { tag ->
+            val t = tag.value
+            val srcset = Regex("""srcset="([^"]+)"""").find(t)?.groupValues?.get(1)?.let(::unescapeHtml)
+            val best = srcset?.split(",")?.map { it.trim().split(" ") }
+                ?.maxByOrNull { it.getOrNull(1)?.removeSuffix("w")?.toIntOrNull() ?: 0 }?.firstOrNull()
+            val src = best ?: Regex("""src="([^"]+)"""").find(t)?.groupValues?.get(1)?.let(::unescapeHtml)
+            src?.takeIf { (it.contains("cdninstagram") || it.contains("fbcdn")) && Regex("""-15/""").containsMatchIn(it) }
+        }.filter { seen.add(it.substringBefore('?').substringAfterLast('/')) }
+            .map { Media(it, extOf(it, "jpg")) }.toList()
+        return user to media
     }
+
+    /** The JSON object right after [key] in [page]. */
+    private fun jsonAfter(page: String, key: String): JSONObject? = runCatching {
+        val start = page.indexOf(key)
+        if (start < 0) return null
+        JSONTokener(page.substring(start + key.length)).nextValue() as? JSONObject
+    }.getOrNull()
 
     /** The post data the embed page keeps in its "contextJSON" string. */
     private fun contextJson(page: String): JSONObject? = runCatching {
@@ -88,6 +154,16 @@ object SiteImages {
         val str = JSONTokener(page.substring(start + "\"contextJSON\":".length)).nextValue() as String
         JSONObject(str)
     }.getOrNull()
+
+    private fun largestCandidate(node: JSONObject): String? {
+        val candidates = node.optJSONObject("image_versions2")?.optJSONArray("candidates") ?: return null
+        var best: JSONObject? = null
+        for (i in 0 until candidates.length()) {
+            val c = candidates.optJSONObject(i) ?: continue
+            if (best == null || c.optInt("width") > best.optInt("width")) best = c
+        }
+        return best?.optString("url")?.takeIf { it.isNotBlank() }
+    }
 
     private fun bestImage(node: JSONObject): String? {
         val resources = node.optJSONArray("display_resources")
@@ -107,14 +183,83 @@ object SiteImages {
     private const val REDDIT_ANDROID_CLIENT_ID = "ohXpoqrZYub1kg"
     private const val REDDIT_ANDROID_UA = "Reddit/Version 2025.43.0/Build 2543005/Android 14"
 
-    /** Downloads the images (and GIFs) of a Reddit post into [dir] through Reddit's Android app API. */
-    fun reddit(url: String, dir: File, log: (String) -> Unit): Int {
-        val postUrl = resolveRedditShareLink(url, log)
+    /**
+     * A reddit.com/r/x/s/abc share link turned into the post's own link (yt-dlp and gallery-dl get
+     * "403 Blocked" for the share page). The link as it is when that doesn't work.
+     */
+    fun resolveRedditShareLink(context: Context, url: String, log: (String) -> Unit = {}): String {
+        if (!redditShareRegex.containsMatchIn(url)) return url
+        log("[reddit] resolving the share link")
+        // without following redirects: Reddit's answer names the post
+        val noRedirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build()
+        runCatching {
+            noRedirects.newCall(Request.Builder().url(url).header("User-Agent", BROWSER_UA).build()).execute().use { r ->
+                val location = r.header("Location").orEmpty()
+                postLink(location)?.let { return it }
+                postLink(r.body.string())?.let { return it }
+            }
+        }
+        // in the browser, where the page itself goes to the post
+        val href = runCatching { webPage(context, url, 1500, "location.href") }.getOrNull()
+        postLink(href.orEmpty())?.let { return it }
+        log("[reddit] the share link couldn't be resolved")
+        return url
+    }
+
+    private fun postLink(text: String) = Regex("""https://(?:www\.|old\.)?reddit\.com/(?:r|u|user)/[\w-]+/comments/\w+[^\s"'<?]*""")
+        .find(text)?.value?.replace("old.reddit.com", "www.reddit.com")
+        ?: Regex("""^/(?:r|u|user)/[\w-]+/comments/\w+""").find(text)?.value?.let { "https://www.reddit.com$it" }
+
+    /**
+     * Downloads the images (and GIFs) of a Reddit post into [dir]: its JSON as the phone's browser
+     * gets it (with a Reddit login of More → Cookies, if there is one), then through Reddit's app API.
+     */
+    fun reddit(context: Context, url: String, dir: File, log: (String) -> Unit): Int {
+        val postUrl = resolveRedditShareLink(context, url, log)
         val id = Regex("""/comments/(\w+)""").find(postUrl)?.groupValues?.get(1)
             ?: Regex("""redd\.it/(\w+)""").find(postUrl)?.groupValues?.get(1)
             ?: throw ExecuteException("No Reddit post in this link: $postUrl")
 
-        log("[reddit-app] $id: requesting a token as the Reddit app")
+        val attempts = listOf<Pair<String, () -> JSONObject>>(
+            "browser" to { redditPostInBrowser(context, "https://www.reddit.com/comments/$id/.json?raw_json=1") },
+            "browser (old Reddit)" to { redditPostInBrowser(context, "https://old.reddit.com/comments/$id/.json?raw_json=1") },
+            "Reddit app API" to { redditPostFromAppApi(id) },
+        )
+        val errors = mutableListOf<String>()
+        for ((name, load) in attempts) {
+            log("[reddit] $id: reading the post ($name)")
+            val post = try {
+                load()
+            } catch (e: Exception) {
+                log("[reddit] $name: ${e.message}")
+                errors += "$name: ${e.message}"
+                continue
+            }
+            // a crosspost: the media are on the original post
+            val source = post.optJSONArray("crosspost_parent_list")?.optJSONObject(0) ?: post
+            val media = redditMedia(source)
+            if (media.isEmpty()) throw ExecuteException("No images were found in this Reddit post")
+            val user = post.optString("author").takeIf { it.isNotBlank() && it != "[deleted]" }
+                ?: post.optString("subreddit").ifBlank { "reddit" }
+            return save(media, dir, user, id, "https://www.reddit.com/", log)
+        }
+        throw ExecuteException(errors.joinToString("\n"))
+    }
+
+    private fun redditPost(json: String): JSONObject {
+        val array = runCatching { JSONArray(json) }.getOrNull()
+            ?: throw ExecuteException("not the post's data: ${json.trim().take(150)}")
+        return array.getJSONObject(0).getJSONObject("data").getJSONArray("children")
+            .getJSONObject(0).getJSONObject("data")
+    }
+
+    private fun redditPostInBrowser(context: Context, url: String): JSONObject {
+        val text = webPage(context, url, 500, "document.body ? document.body.innerText : ''")
+            ?: throw ExecuteException("the page didn't load")
+        return redditPost(text)
+    }
+
+    private fun redditPostFromAppApi(id: String): JSONObject {
         val deviceId = UUID.randomUUID().toString()
         val headers = mutableMapOf(
             "User-Agent" to REDDIT_ANDROID_UA,
@@ -129,32 +274,21 @@ object SiteImages {
             .post("""{"scopes":["*","email","pii"]}""".toRequestBody("application/json".toMediaType()))
             .build()
         val token = client.newCall(tokenRequest).execute().use { r ->
-            val body = r.body?.string().orEmpty()
+            val body = r.body.string()
             r.header("x-reddit-loid")?.let { headers["x-reddit-loid"] = it }
             r.header("x-reddit-session")?.let { headers["x-reddit-session"] = it }
             runCatching { JSONObject(body).optString("access_token") }.getOrNull()?.takeIf { it.isNotBlank() }
-                ?: throw ExecuteException("Reddit refused the app token (HTTP ${r.code}): ${body.take(200)}")
+                ?: throw ExecuteException("no app token (HTTP ${r.code})")
         }
         headers["Authorization"] = "Bearer $token"
-
-        log("[reddit-app] $id: reading the post")
         val postRequest = Request.Builder()
             .url("https://oauth.reddit.com/comments/$id/.json?raw_json=1&limit=1")
             .apply { headers.forEach { (k, v) -> header(k, v) } }
             .build()
-        val post = client.newCall(postRequest).execute().use { r ->
-            val body = r.body?.string().orEmpty()
-            if (!r.isSuccessful) throw ExecuteException("Reddit didn't return the post (HTTP ${r.code}): ${body.take(200)}")
-            JSONArray(body).getJSONObject(0).getJSONObject("data").getJSONArray("children")
-                .getJSONObject(0).getJSONObject("data")
+        return client.newCall(postRequest).execute().use { r ->
+            if (!r.isSuccessful) throw ExecuteException("HTTP ${r.code}")
+            redditPost(r.body.string())
         }
-        // a crosspost: the media are on the original post
-        val source = post.optJSONArray("crosspost_parent_list")?.optJSONObject(0) ?: post
-        val media = redditMedia(source)
-        if (media.isEmpty()) throw ExecuteException("No images were found in this Reddit post")
-        val user = post.optString("author").takeIf { it.isNotBlank() && it != "[deleted]" }
-            ?: post.optString("subreddit").ifBlank { "reddit" }
-        return save(media, dir, user, id, "https://www.reddit.com/", log)
     }
 
     private fun redditMedia(post: JSONObject): List<Media> {
@@ -198,35 +332,70 @@ object SiteImages {
         return media
     }
 
-    /** reddit.com/r/x/s/abc share links point to the post through a redirect. */
-    private fun resolveRedditShareLink(url: String, log: (String) -> Unit): String {
-        if (!Regex("""/s/\w+""").containsMatchIn(url)) return url
-        log("[reddit-app] resolving the share link")
-        val noRedirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build()
-        var current = url
-        repeat(5) {
-            val location = runCatching {
-                noRedirects.newCall(Request.Builder().url(current).header("User-Agent", BROWSER_UA).build()).execute()
-                    .use { r ->
-                        if (r.isRedirect) r.header("Location")
-                        // a page instead of the redirect: the post's link in it
-                        else Regex("""https://www\.reddit\.com/r/\w+/comments/\w+""").find(r.body?.string().orEmpty())?.value
-                    }
-            }.getOrNull() ?: return current
-            current = if (location.startsWith("/")) "https://www.reddit.com$location" else location
-            if (current.contains("/comments/")) return current
-        }
-        return current
-    }
-
     // ---------------------------------------------------------------- shared
 
     private fun get(url: String, ua: String): String? = runCatching {
         client.newCall(Request.Builder().url(url).header("User-Agent", ua)
             .header("Accept-Language", "en-US,en;q=0.9").build()).execute().use { r ->
-            if (r.isSuccessful) r.body?.string() else null
+            if (r.isSuccessful) r.body.string() else null
         }
     }.getOrNull()
+
+    /**
+     * Opens [url] in a hidden WebView and returns what [script] gives once the page has finished
+     * loading and [settleMs] more have passed (for pages that build themselves with JavaScript).
+     * Null when it can't be done (no WebView, the main thread, a timeout).
+     */
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun webPage(
+        context: Context, url: String, settleMs: Long,
+        script: String = "document.documentElement.outerHTML", timeoutMs: Long = 30_000
+    ): String? {
+        if (Looper.myLooper() == Looper.getMainLooper()) return null
+        val handler = Handler(Looper.getMainLooper())
+        val latch = CountDownLatch(1)
+        var result: String? = null
+        var view: WebView? = null
+        val grab = Runnable {
+            val v = view
+            if (v == null) latch.countDown()
+            else v.evaluateJavascript(script) { value ->
+                result = runCatching { JSONTokener(value).nextValue() as? String }.getOrNull()
+                latch.countDown()
+            }
+        }
+        handler.post {
+            try {
+                val wv = WebView(context.applicationContext)
+                view = wv
+                wv.settings.javaScriptEnabled = true
+                wv.settings.domStorageEnabled = true
+                wv.settings.blockNetworkImage = true
+                // as the phone's Chrome, not an app's WebView
+                wv.settings.userAgentString = wv.settings.userAgentString.replace("; wv", "")
+                CookieManager.getInstance().setAcceptCookie(true)
+                CookieManager.getInstance().setAcceptThirdPartyCookies(wv, true)
+                wv.webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(v: WebView, u: String) {
+                        // (again after each redirect: the last page counts)
+                        handler.removeCallbacks(grab)
+                        handler.postDelayed(grab, settleMs)
+                    }
+                }
+                wv.loadUrl(url)
+            } catch (e: Throwable) {
+                latch.countDown()
+            }
+        }
+        latch.await(timeoutMs, TimeUnit.MILLISECONDS)
+        handler.post {
+            handler.removeCallbacks(grab)
+            view?.stopLoading()
+            view?.destroy()
+            view = null
+        }
+        return result
+    }
 
     private fun save(media: List<Media>, dir: File, user: String, postId: String, referer: String, log: (String) -> Unit): Int {
         dir.mkdirs()
@@ -237,7 +406,7 @@ object SiteImages {
             client.newCall(Request.Builder().url(m.url).header("User-Agent", BROWSER_UA).header("Referer", referer).build())
                 .execute().use { r ->
                     if (!r.isSuccessful) throw ExecuteException("HTTP Error ${r.code} downloading ${m.url}")
-                    file.outputStream().use { out -> r.body!!.byteStream().copyTo(out) }
+                    file.outputStream().use { out -> r.body.byteStream().copyTo(out) }
                 }
         }
         return media.size

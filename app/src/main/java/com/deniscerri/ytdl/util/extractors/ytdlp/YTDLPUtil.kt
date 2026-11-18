@@ -37,6 +37,7 @@ import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.QuickFormats
+import com.deniscerri.ytdl.util.SiteImages
 import com.deniscerri.ytdl.util.SocialMediaUtil
 import com.google.gson.Gson
 import com.google.gson.Strictness
@@ -214,7 +215,12 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
     }
 
     @SuppressLint("RestrictedApi")
-    suspend fun getFromYTDL(query: String, singleItem: Boolean = false, resultsGenerated: suspend (pagedResults: List<ResultItem>) -> Unit): List<ResultItem> {
+    suspend fun getFromYTDL(originalQuery: String, singleItem: Boolean = false, resultsGenerated: suspend (pagedResults: List<ResultItem>) -> Unit): List<ResultItem> {
+        // YTindir: Reddit's share links (reddit.com/r/x/s/abc) answer yt-dlp with "403 Blocked":
+        // the post's own link instead
+        val query = if (originalQuery.contains("http") && SiteImages.isReddit(originalQuery)) {
+            withContext(Dispatchers.IO) { SiteImages.resolveRedditShareLink(context, originalQuery.trim()) }
+        } else originalQuery
         val searchEngine = sharedPreferences.getString("search_engine", "ytsearch")
 
         val request : YTDLRequest

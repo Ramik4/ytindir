@@ -103,10 +103,11 @@ object GalleryDlUtil {
 
     /**
      * Downloads [url]'s images into [dir]: with gallery-dl, or the app's own way in (SiteImages)
-     * where gallery-dl needs a login the cookies don't have:
-     * - Reddit without a Reddit login: straight through Reddit's Android app API
-     * - Instagram: gallery-dl with a logged-in account, otherwise (or when that fails) the post's
-     *   embed page, which logged-out visitors get too
+     * where gallery-dl needs a login the cookies don't have, or fails:
+     * - Reddit: gallery-dl only with a Reddit login in the cookies; otherwise (or when it fails)
+     *   the post as the phone's browser gets it
+     * - Instagram: gallery-dl only with an Instagram login; otherwise (or when it fails) the post's
+     *   embed page and post page, which logged-out visitors get too
      */
     fun download(
         context: Context, url: String, format: Format, dir: File, args: List<String>, useCookies: Boolean,
@@ -117,19 +118,16 @@ object GalleryDlUtil {
         fun done(count: Int, note: String) = ExecuteResponse(listOf(note), 0, System.currentTimeMillis() - started, "$note: $count file(s)", "")
         fun clear() = dir.listFiles()?.forEach { it.deleteRecursively() }
 
-        if (SiteImages.isReddit(url) && !(useCookies && hasLogin(context, "reddit.com", "reddit_session"))) {
-            log("[YTindir] No Reddit login in the cookies: reading the post as the Reddit app")
-            return try {
-                done(SiteImages.reddit(url, dir, log), "Reddit app API")
-            } catch (e: Exception) {
-                throw ExecuteException("[Reddit] ${e.message}\nReddit didn't give the post without a login")
-            }
+        val reddit = SiteImages.isReddit(url)
+        val instagram = SiteImages.isInstagramPost(url)
+        val loggedIn = when {
+            reddit -> useCookies && hasLogin(context, "reddit.com", "reddit_session")
+            instagram -> useCookies && hasLogin(context, "instagram.com", "sessionid")
+            else -> true
         }
 
-        val instagram = SiteImages.isInstagramPost(url)
-        val instagramLogin = instagram && useCookies && hasLogin(context, "instagram.com", "sessionid")
         var galleryError: Throwable? = null
-        if (!instagram || instagramLogin) {
+        if (loggedIn) {
             try {
                 val response = GalleryDl.execute(context, args, processId = processId, redirectErrorStream = true, callback = callback)
                 convertGifs(dir)
@@ -141,17 +139,21 @@ object GalleryDlUtil {
                 galleryError = e
             }
         }
-        if (!instagram) throw galleryError!!
+        if (!reddit && !instagram) throw galleryError!!
 
-        log(if (instagramLogin) "[YTindir] gallery-dl couldn't read the post, trying Instagram's embed page"
-            else "[YTindir] No Instagram login in the cookies: reading the post's embed page")
+        val site = if (reddit) "Reddit" else "Instagram"
+        log(if (loggedIn) "[YTindir] gallery-dl couldn't read the post, trying $site's pages"
+            else "[YTindir] No $site login in the cookies: reading the post's pages")
         clear()
         return try {
-            done(SiteImages.instagram(url, dir, includesVideos(format), log), "Instagram embed page")
+            val count = if (reddit) SiteImages.reddit(context, url, dir, log)
+                else SiteImages.instagram(context, url, dir, includesVideos(format), log)
+            done(count, "$site pages")
         } catch (e: Exception) {
             clear()
             val first = galleryError?.message?.let { "$it\n" }.orEmpty()
-            throw ExecuteException("$first[instagram-embed] ${e.message}")
+            throw ExecuteException("$first[$site] ${e.message}" +
+                if (loggedIn) "" else "\n$site didn't give the post without a login")
         }
     }
 
