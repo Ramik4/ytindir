@@ -57,6 +57,9 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
     val quickItemVersion = MutableStateFlow(0)
     // ...and the quick list's Download button: the card starts the download once it took the choice
     val quickDownload = MutableStateFlow(false)
+    // ...and All options in the quick list: the user went to the card for its other settings, so in this
+    // card the format field opens the full format list, not the quick list again
+    val quickListSkipped = MutableStateFlow(false)
 
     // YTindir: the open groups of dubbed formats in the format list (closed when the list opens)
     val openFormatGroups = MutableStateFlow(setOf<String>())
