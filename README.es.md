@@ -12,7 +12,7 @@
 
 <p align="center"><a href="README.md">English</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.ru.md">Русский</a> · <b>Español</b></p>
 
-YTindir descarga audio y vídeo de YouTube, Instagram, TikTok, Facebook, VK, X y más de 1000 sitios web. Está basado en yt-dlp y YTDLnis, con una interfaz más sencilla, un aspecto renovado y una configuración que se mantiene funcionando cuando los sitios cambian.
+YTindir descarga audio, vídeo e imágenes de YouTube, Instagram, TikTok, Facebook, VK, X, Reddit, Pinterest y más de 1000 sitios web. Está basado en yt-dlp y YTDLnis, con una interfaz más sencilla, un aspecto renovado y una configuración que se mantiene funcionando cuando los sitios cambian.
 
 ## 🎬 Calidad de descarga
 
@@ -24,16 +24,20 @@ YTindir descarga audio y vídeo de YouTube, Instagram, TikTok, Facebook, VK, X y
 | **X (Twitter)** | 2K 60fps, 1080p FHD 60fps y otras resoluciones |
 | **Facebook** | 2K 60fps, 1080p FHD 60fps y otras resoluciones |
 | **VK** | 2K 60fps, 1080p FHD 60fps y otras resoluciones |
+| **Reddit** | 1080p FHD (con sonido), imágenes y GIF sin cuenta |
 | **Otros sitios** | Las resoluciones compatibles más altas que ofrezca el sitio |
 
 ## ✨ Funciones
 
 - ⚡ **Lista de descarga rápida para YouTube**: se abre en cuanto compartes un enlace, con la etiqueta de cada calidad (8K, 4K, 2K, FHD, HD), la tasa de fotogramas, el códec y el tamaño real del archivo; elige una y toca **Descargar**. También M4A (audio original), MP3 a 192 kbps y la miniatura original
-- 📋 **Todos los formatos** para un control total: todas las pistas de vídeo y audio, con el audio original y el doblado agrupados por separado
-- 📤 **Descarga desde el menú Compartir** de cualquier app, o directamente desde el menú de descarga de YouTube en las nuevas versiones de YouTube Morphe
+- 📋 **All options** para un control total: la ventana de descarga con todos sus ajustes y la lista completa de todas las pistas de vídeo y audio, con el audio original y el doblado agrupados por separado
+- 📤 **Descarga desde el menú Compartir** de cualquier app, o directamente desde el botón de descarga de **YouTube RLX** y **YT Music RLX**: su menú de descarga rápida muestra las calidades con el tamaño de los archivos y pone la descarga en la cola de YTindir, y su **All options** abre la ventana de descarga de YTindir
 - ✂️ **Recortar y encuadrar**: descarga solo una parte de un vídeo o encuádralo (por ejemplo, en cuadrado)
+- 🖼️ **Pestaña Imagen**: todas las imágenes de una publicación (un carrusel o una galería entera) de Instagram, X, Pinterest, Reddit, Tumblr y más, con gallery-dl; los GIF como archivos .gif reales
+- 🔤 **Subtítulos** en los idiomas que elijas (por defecto, el idioma del teléfono), con la traducción automática de YouTube cuando un idioma no los tiene; dentro del vídeo, como archivo .srt o ambos
+- 📁 **Plantillas de nombre de archivo** (por defecto, solo el título) y una **subcarpeta por canal**
 - 🎞️ **Vídeo compatible**: los vídeos VP9, AV1 y HEVC de redes sociales se convierten a H.264 con una calidad casi original, para los reproductores y editores que lo necesiten
-- 🔁 **Autorreparación**: yt-dlp se actualiza solo; si una descarga falla por un cambio en un sitio, YTindir actualiza yt-dlp y vuelve a intentarlo por sí mismo
+- 🔁 **Autorreparación**: yt-dlp se actualiza solo; si una descarga falla por un cambio en un sitio, YTindir actualiza yt-dlp y vuelve a intentarlo por sí mismo. Las descargas siguen en redes lentas o inestables, y los vídeos por partes se descargan de 4 en 4
 - 💬 **Errores claros**: cada error explica qué ha fallado y qué hacer, con soluciones de un toque, como reintentar sin comprobar el certificado
 - 🎤 **Letras sincronizadas** incrustadas en los archivos de audio, **SponsorBlock**, nombres de archivo limpios y nombres cortos como `usuario_idpublicacion` para redes sociales
 - 🍪 **Cookies**, **PO token**, proxy e IPv4 para el contenido difícil de descargar
