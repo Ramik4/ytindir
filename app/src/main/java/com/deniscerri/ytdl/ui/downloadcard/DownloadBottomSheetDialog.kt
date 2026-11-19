@@ -151,6 +151,11 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             if(resources.getBoolean(R.bool.isTablet) || resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 behavior.peekHeight = displayMetrics.heightPixels
+            } else {
+                // YTindir: the whole card on the screen in every tab, down to the link at the bottom,
+                // instead of a card cut at the peek height that has to be pulled up; a swipe down closes it
+                behavior.skipCollapsed = true
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
 
