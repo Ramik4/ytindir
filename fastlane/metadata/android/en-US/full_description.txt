@@ -2,12 +2,15 @@
 
 <b>Features</b>
 
-- Audio and video downloads from more than 1000 websites, with format and quality selection
-- Quick download list for YouTube in YouTube's style: 4K, 2K, 1080p and 720p with file sizes, M4A or MP3 audio, and the thumbnail
+- Audio, video and image downloads from more than 1000 websites, with format and quality selection
+- Quick download list for YouTube in YouTube's style: 4K, 2K, 1080p and 720p with file sizes, M4A or MP3 audio, and the thumbnail; All options opens the download card with all its settings
 - Best quality from Instagram, X and TikTok by default, saved with short names
 - Trimming and cropping; cut files are saved as Title_1, Title_2…
 - Clean file names, without characters Windows or file managers refuse
-- Download straight from the share menu of any app
+- Download straight from the share menu of any app, or from the download button of YouTube RLX and YT Music RLX
+- Image tab: every image of a post from Instagram, X, Pinterest, Reddit, Tumblr and more, with gallery-dl
+- Subtitles in the languages you choose, with YouTube's automatic translation; inside the video or as an .srt file
+- File name templates and a subfolder per channel
 - Self-repair: yt-dlp updates itself and a failed download is retried once with the new version
 - Synced lyrics from lrclib.net, embedded into the audio file
 - In-app updates

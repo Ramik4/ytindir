@@ -151,6 +151,11 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             if(resources.getBoolean(R.bool.isTablet) || resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 behavior.peekHeight = displayMetrics.heightPixels
+            } else {
+                // YTindir: the whole card on the screen in every tab, down to the link at the bottom,
+                // instead of a card cut at the peek height that has to be pulled up; a swipe down closes it
+                behavior.skipCollapsed = true
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
 
@@ -207,9 +212,12 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
         // YTindir: a new YouTube download opens on the quick list (unless it's turned off in the settings),
         // in the tab the card opens on; it fills in as the data and formats arrive
         // (a new card starts with the quick list again on its format field, a restored one keeps the choice)
-        if (!restored) ViewModelProvider(requireActivity())[FormatViewModel::class.java].quickListSkipped.value = false
+        // (FORMAT_LIST=none from the app that shared the link: the user chose All options in its quick download
+        // menu, so the card opens without the quick list and its format field opens the full format list)
+        val quickListOff = arguments?.getString("format_list") == "none"
+        if (!restored) ViewModelProvider(requireActivity())[FormatViewModel::class.java].quickListSkipped.value = quickListOff
         ViewModelProvider(requireActivity())[FormatViewModel::class.java].quickAutoOpen.value =
-            if (!restored && currentDownloadItem == null && result.url.isYoutubeURL() &&
+            if (!restored && !quickListOff && currentDownloadItem == null && result.url.isYoutubeURL() &&
                 !result.url.endsWith(".txt") && sharedPreferences.getBoolean("youtube_quick_format_list", true)) {
                 if (type == DownloadType.audio || isAudioOnly) DownloadType.audio else DownloadType.video
             } else null

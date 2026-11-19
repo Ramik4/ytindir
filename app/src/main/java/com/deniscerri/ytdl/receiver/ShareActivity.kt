@@ -207,6 +207,9 @@ class ShareActivity : BaseActivity() {
                     downloadCardViewModel.setDownloadItem(null)
                     val bundle = Bundle()
                     bundle.putSerializable("type", downloadType)
+                    // YTindir: FORMAT_LIST=none from the app that shared the link (All options in the quick
+                    // download menu of YouTube RLX / Morphe): the card opens by itself, without the quick list
+                    bundle.putString("format_list", intent.getStringExtra("FORMAT_LIST"))
                     navController.setGraph(R.navigation.share_nav_graph, bundle)
                 }else{
                     Toast.makeText(this@ShareActivity, "${getString(R.string.downloading)} $inputQuery", Toast.LENGTH_SHORT).show()

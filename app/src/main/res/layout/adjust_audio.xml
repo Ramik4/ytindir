@@ -14,17 +14,18 @@
             android:paddingBottom="4dp"
             android:textAppearance="@style/YTindir.SectionLabel" />
 
+    <!-- YTindir: two rows, as in the video tab: thumbnail, lyrics and bitrate, then cut and the
+         file name template; the hidden chips show only when they apply -->
     <HorizontalScrollView
-        android:scrollbars="none"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
         <com.google.android.material.chip.ChipGroup
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:chipSpacingVertical="0dp"
-            app:singleLine="true"
-            android:layout_height="wrap_content">
-
+            app:singleLine="true">
             <com.google.android.material.chip.Chip
                 android:id="@+id/thumbnail"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
@@ -47,6 +48,22 @@
                 app:chipIconVisible="true"
                 app:chipIcon="@drawable/ic_lyrics"
                 app:cornerRadius="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/audio_bitrate"
+                style="@style/Widget.Material3.Chip.Assist.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minWidth="30dp"
+                android:outlineProvider="none"
+                android:text="@string/bitrate"
+                app:chipIcon="@drawable/baseline_high_quality_24"
+                app:chipIconVisible="true"
+                app:cornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/split_by_chapters"
@@ -72,20 +89,17 @@
             android:layout_height="wrap_content"
             app:chipSpacingVertical="0dp"
             app:singleLine="true">
-
-
             <com.google.android.material.chip.Chip
-                android:id="@+id/sponsorblock_filters"
-                android:visibility="gone"
+                android:id="@+id/cut"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:minWidth="30dp"
-                android:outlineProvider="none"
-                android:text="@string/sponsorblock"
-                app:chipIcon="@drawable/ic_money"
                 app:chipIconVisible="true"
+                android:outlineProvider="none"
+                app:chipIcon="@drawable/ic_cut"
+                android:text="@string/cut"
+                android:minWidth="30dp"
                 app:cornerRadius="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -107,18 +121,22 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
-        </com.google.android.material.chip.ChipGroup>
-
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-
-        <com.google.android.material.chip.ChipGroup
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sponsorblock_filters"
+                android:visibility="gone"
+                style="@style/Widget.Material3.Chip.Assist.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minWidth="30dp"
+                android:outlineProvider="none"
+                android:text="@string/sponsorblock"
+                app:chipIcon="@drawable/ic_money"
+                app:chipIconVisible="true"
+                app:cornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/extra_commands"
@@ -137,42 +155,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/audio_bitrate"
-                style="@style/Widget.Material3.Chip.Assist.Elevated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:minWidth="30dp"
-                android:outlineProvider="none"
-                android:text="@string/bitrate"
-                app:chipIcon="@drawable/baseline_high_quality_24"
-                app:chipIconVisible="true"
-                app:cornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/cut"
-                style="@style/Widget.Material3.Chip.Assist.Elevated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                app:chipIconVisible="true"
-                android:outlineProvider="none"
-                app:chipIcon="@drawable/ic_cut"
-                android:text="@string/cut"
-                android:minWidth="30dp"
-                app:cornerRadius="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
         </com.google.android.material.chip.ChipGroup>
 
     </HorizontalScrollView>
 
-
-    
 </LinearLayout>
