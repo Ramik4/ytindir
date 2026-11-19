@@ -4,11 +4,11 @@ The post for a new YTindir release in the 4PDA thread (BBCode).
 
 How to fill it in:
 
-- `X.Y.Z`: the version, e.g. `2.15.0`
+- `X.Y.Z`: the version, e.g. `2.18.0`
 - `BUILD`: the GitHub Actions build number from the release tag (`vX.Y.Z-buildBUILD`)
-- The "What's new" list: the Russian notes (`notes:ru`) from `release-notes/vX.Y.Z.md`, each line starting with `✓`
-- The second section is `🔧 Изменения` when the release notes have a "Changes" section, `🐛 Исправления` for "Bug fixes"
-- The arm64 APK (`YTindir-vX.Y.Z_arm64.apk`) is attached to the post on 4PDA
+- The "What's new" lists: the Russian notes (`notes:ru`) from `release-notes/vX.Y.Z.md`, each line starting with `•`
+- The second section is `🔧 Изменения:` when the release notes have a "Changes" section, `🐛 Исправления:` for "Bug fixes"; its last line is always the bold `• Исправления ошибок и другие улучшения`
+- The arm64 APK (`YTindir-vX.Y.Z_arm64.apk`) is attached to the post on 4PDA, under the first ▷ line
 - `SIZE`: the universal APK's size in MB (decimal, as the release page shows it); the link always points to the latest release, so it never changes
 
 ```
@@ -18,58 +18,55 @@ How to fill it in:
 [b]Версия:[/b] X.Y.Z
 [b]Краткое описание:[/b] YTindir - загрузчик видео и аудио на базе yt-dlp (build BUILD)
 
-[spoiler=☑ Что нового в моде »]
+[spoiler=☑ Что нового »]
 
-[i]✨ Новые возможности[/i]
-✓ …
+[b]✨ Новые возможности:[/b]
+• …
 
-[i]🔧 Изменения[/i]
-✓ …
-✓ Исправления ошибок
-✓ Различные улучшения
+[b]🔧 Изменения:[/b]
+• …
+[b]• Исправления ошибок и другие улучшения[/b]
 
 [/spoiler]
-
 [center][b]Скачать ↆ Download[/b][/center]
 
 ▷ [b][color="#00cc66"]YTindir[/color][/b] vX.Y.Z ✓
 
 ▷ [b][color="#00cc66"]YTindir[/color][/b] vX.Y.Z (universal) ✓
-[url="https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk"][color="#808080"]YTindir-vX.Y.Z_universal.apk[/color][/url] (SIZE МБ)
+[url="https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk"][color="#000000"]YTindir-vX.Y.Z_universal.apk[/color][/url] (SIZE МБ)
 ```
 
-## Example: 2.15.0
+## Example: 2.18.0
 
 ```
-[size=2][b][color="#00cc66"] YTindir[/color][/size][/b] v2.15.0 ✓
+[size=2][b][color="#00cc66"] YTindir[/color][/size][/b] v2.18.0 ✓
 
 [b]Тип:[/b] Новая версия
-[b]Версия:[/b] 2.15.0
-[b]Краткое описание:[/b] YTindir - загрузчик видео и аудио на базе yt-dlp (build 78)
+[b]Версия:[/b] 2.18.0
+[b]Краткое описание:[/b] YTindir - загрузчик видео и аудио на базе yt-dlp (build 115)
 
-[spoiler=☑ Что нового в моде »]
+[spoiler=☑ Что нового »]
 
-[i]✨ Новые возможности[/i]
-✓ Для ссылок YouTube нажатие на качество открывает новый расширенный список быстрой загрузки
-✓ Варианты загрузки только аудио M4A (исходный звук), MP3 (Opus → MP3) и обложки (оригинальный JPG) для ссылок YouTube
-✓ Значки качества 4K, 2K, FHD и HD в вариантах быстрой загрузки, с размером файла, кодеком и частотой кадров
-✓ Новое расширенное меню быстрой загрузки внутри YouTube (будет доступно в новых версиях YouTube Morphe)
-✓ В списке всех форматов видео с оригинальной озвучкой и дублированные видео сгруппированы отдельно
-✓ SponsorBlock вернулся (Настройки → Обработка, по умолчанию выключен)
+[b]✨ Новые возможности:[/b]
+• Субтитры: скачиваются на выбранных языках (по умолчанию язык телефона); если для языка нет своих субтитров, скачивается автоматический перевод YouTube. Сохраняются в видео, отдельным файлом .srt или и так, и так (Настройки → Обработка → Видео и кнопка «Субтитры» в окне загрузки)
+• Шаблоны имени файла: теперь по умолчанию только название; готовые шаблоны (Название, Канал - Название, Название [ID], Название - Канал, Название - Дата) с примером получаемого имени
+• Отдельная подпапка для каждого канала (Настройки → Папки → Сохранить в подкаталог)
 
-[i]🔧 Изменения[/i]
-✓ Список форматов стал чище: аудио низкого качества, DRC-копии звука и видео ниже 480p скрыты
-✓ Фильтр форматов и источники форматов удалены
-✓ Старый ярлык «Быстрая загрузка» в меню «Поделиться» удалён
-✓ Исправления ошибок
-✓ Различные улучшения
+[b]🔧 Изменения:[/b]
+• Список быстрой загрузки YouTube: «Все форматы» теперь «Все параметры» и открывает окно загрузки со всеми настройками; там поле формата открывает полный список форматов
+• Данные по ссылке загружаются быстрее: плеер YouTube больше не скачивается и не обрабатывается заново для каждой ссылки
+• Загрузки продолжаются при медленном или нестабильном соединении, а не останавливаются
+• Видео из частей (Instagram, X, TikTok и другие) скачиваются быстрее, по 4 части одновременно
+• Субтитры, которые не удалось скачать, больше не останавливают загрузку видео
+• «Настройка видео» в окне загрузки в две строки: Миниатюра, Аудио, Субтитры / Вырезать, Обрезать, Шаблон имени файла
+• Видео, скачанные во вкладке «Изображения», сохраняются в папку Video; изображения и GIF остаются в Images
+[b]• Исправления ошибок и другие улучшения[/b]
 
 [/spoiler]
-
 [center][b]Скачать ↆ Download[/b][/center]
 
-▷ [b][color="#00cc66"]YTindir[/color][/b] v2.15.0 ✓
+▷ [b][color="#00cc66"]YTindir[/color][/b] v2.18.0 ✓
 
-▷ [b][color="#00cc66"]YTindir[/color][/b] v2.15.0 (universal) ✓
-[url="https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk"][color="#808080"]YTindir-v2.15.0_universal.apk[/color][/url] (196 МБ)
+▷ [b][color="#00cc66"]YTindir[/color][/b] v2.18.0 (universal) ✓
+[url="https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk"][color="#000000"]YTindir-v2.18.0_universal.apk[/color][/url] (197 МБ)
 ```
