@@ -1509,6 +1509,9 @@ object UiUtil {
 
         // YTindir: subtitles, simply: on, YouTube's auto-translation, the languages and how they are saved
         val adjustSubtitles = view.findViewById<Chip>(R.id.adjust_subtitles)
+        // (only with subtitles on in the settings, or on for this download)
+        adjustSubtitles.isVisible = sharedPreferences.getBoolean(Subtitles.PREF_DOWNLOAD, false) ||
+            items.any { Subtitles.isOn(it.videoPreferences) }
         fun calculateAdjustSubtitlesChangeCount() {
             adjustSubtitles.createBadge(context, if (items.all { Subtitles.isOn(it.videoPreferences) }) 1 else 0)
         }
@@ -2442,8 +2445,33 @@ object UiUtil {
             }
         }
 
+        // YTindir: the name the template gives, right away, and the ready-made templates by name
+        val exampleText = view.findViewById<TextView>(R.id.filename_example)
+        val exampleExtension = itemContext?.container?.takeIf { it.isNotBlank() && it != "Default" && it != context.getString(R.string.defaultValue) }
+            ?: if (itemContext?.type == DownloadType.audio) "m4a" else "mp4"
+        fun updateExample() {
+            val template = editText.text.toString()
+            exampleText.isVisible = template.isNotBlank()
+            exampleText.text = context.getString(R.string.name_example, NameTemplates.example(context, template, exampleExtension))
+        }
+        updateExample()
+        val presetChips = view.findViewById<ChipGroup>(R.id.filename_preset_chipgroup)
+        NameTemplates.presets(context).forEach { (label, template) ->
+            val chip = context.layoutInflater.inflate(R.layout.filter_chip, presetChips, false) as Chip
+            chip.text = label
+            chip.isChecked = editText.text.toString() == template
+            chip.setOnClickListener {
+                editText.setText(template)
+                editText.setSelection(editText.text.length)
+                chip.isChecked = true
+            }
+            presetChips.addView(chip)
+        }
+
         editText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateExample()
+                presetChips.children.forEach { c -> (c as Chip).isChecked = NameTemplates.presets(context).any { p -> p.first == c.text && p.second == s.toString() } }
                 previewTemplateText.isVisible = false
                 previewTemplateLoading.isVisible = false
                 previewTemplateBtn.isVisible = true

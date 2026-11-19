@@ -1210,6 +1210,10 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
             if (subDirectories.contains("playlist")) {
                 customFileNameTemplate = "%(playlist|)s/$customFileNameTemplate"
             }
+            // YTindir: a folder per channel (website/channel/playlist/...)
+            if (subDirectories.contains("channel")) {
+                customFileNameTemplate = "%(uploader,channel|)s/$customFileNameTemplate"
+            }
             if (subDirectories.contains("website")) {
                 customFileNameTemplate = "%(fldr_website|)s/$customFileNameTemplate"
             }

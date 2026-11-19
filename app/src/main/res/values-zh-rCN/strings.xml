@@ -708,4 +708,10 @@
     <string name="subs_save_file">单独文件 (.srt)</string>
     <string name="subs_save_both">两者都要</string>
     <string name="subs_phone_language">%1$s（手机语言）</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">频道</string>
+    <string name="name_part_date">日期</string>
+    <string name="name_presets">现成模板</string>
+    <string name="name_example">示例：%1$s</string>
+    <string name="name_sample_title">视频标题</string>
 </resources>

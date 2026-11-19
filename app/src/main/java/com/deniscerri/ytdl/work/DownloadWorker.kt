@@ -527,6 +527,30 @@ class DownloadWorker(
                                     }
                                 }
 
+                                // YTindir: the videos of an Image tab download (Reddit, Instagram, X...) go to the
+                                // Video folder like the app's other videos; the pictures and GIFs stay in Images
+                                if (isImage && !writeDirectly) {
+                                    runCatching {
+                                        val videoExtensions = setOf("mp4", "webm", "mov", "m4v", "mkv")
+                                        val videos = tempFileDir.walk().filter { f ->
+                                            f.isFile && f.extension.lowercase() in videoExtensions && f.length() > 0
+                                        }.toList()
+                                        if (videos.isNotEmpty()) {
+                                            val videoDir = File(cacheDir, "${downloadItem.id}_videos").apply {
+                                                deleteRecursively()
+                                                mkdirs()
+                                            }
+                                            videos.forEach { f -> f.renameTo(File(videoDir, f.name)) }
+                                            val videoLocation = sharedPreferences.getString("video_path", FileUtil.getDefaultVideoPath())!!
+                                            val moved = withContext(Dispatchers.IO) {
+                                                FileUtil.moveFile(videoDir, context, videoLocation, keepCache) {}
+                                            }
+                                            videoDir.deleteRecursively()
+                                            finalPaths.addAll(moved)
+                                        }
+                                    }.onFailure { e -> logString.append("Moving the videos to the Video folder failed: ${e.message}\n") }
+                                }
+
                                 //move files manually if external provider
                                 try {
                                     val otherPaths = withContext(Dispatchers.IO) {

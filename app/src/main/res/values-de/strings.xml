@@ -607,4 +607,10 @@
     <string name="subs_save_file">Separate Datei (.srt)</string>
     <string name="subs_save_both">Beides</string>
     <string name="subs_phone_language">%1$s (Sprache des Telefons)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">Kanal</string>
+    <string name="name_part_date">Datum</string>
+    <string name="name_presets">Fertige Vorlagen</string>
+    <string name="name_example">Beispiel: %1$s</string>
+    <string name="name_sample_title">Videotitel</string>
 </resources>

@@ -1533,12 +1533,14 @@
 
     <string-array name="save_subdirectory">
         <item>@string/website</item>
+        <item>@string/name_part_channel</item>
         <item>@string/playlist</item>
         <item>@string/media_type</item>
     </string-array>
 
     <string-array name="save_subdirectory_values">
         <item>website</item>
+        <item>channel</item>
         <item>playlist</item>
         <item>media_type</item>
     </string-array>

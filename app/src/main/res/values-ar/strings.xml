@@ -712,4 +712,10 @@
     <string name="subs_save_file">ملف منفصل (.srt)</string>
     <string name="subs_save_both">كلاهما</string>
     <string name="subs_phone_language">%1$s (لغة الهاتف)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">القناة</string>
+    <string name="name_part_date">التاريخ</string>
+    <string name="name_presets">قوالب جاهزة</string>
+    <string name="name_example">مثال: %1$s</string>
+    <string name="name_sample_title">عنوان الفيديو</string>
 </resources>

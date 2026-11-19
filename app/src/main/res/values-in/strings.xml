@@ -708,4 +708,10 @@
     <string name="subs_save_file">File terpisah (.srt)</string>
     <string name="subs_save_both">Keduanya</string>
     <string name="subs_phone_language">%1$s (bahasa ponsel)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">Saluran</string>
+    <string name="name_part_date">Tanggal</string>
+    <string name="name_presets">Template siap pakai</string>
+    <string name="name_example">Contoh: %1$s</string>
+    <string name="name_sample_title">Judul video</string>
 </resources>

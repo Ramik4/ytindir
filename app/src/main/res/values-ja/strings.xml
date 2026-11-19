@@ -612,4 +612,10 @@
     <string name="subs_save_file">別ファイル (.srt)</string>
     <string name="subs_save_both">両方</string>
     <string name="subs_phone_language">%1$s（端末の言語）</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">チャンネル</string>
+    <string name="name_part_date">日付</string>
+    <string name="name_presets">テンプレート</string>
+    <string name="name_example">例: %1$s</string>
+    <string name="name_sample_title">動画タイトル</string>
 </resources>

@@ -705,4 +705,10 @@
     <string name="subs_save_file">Arquivo separado (.srt)</string>
     <string name="subs_save_both">Ambos</string>
     <string name="subs_phone_language">%1$s (idioma do celular)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">Canal</string>
+    <string name="name_part_date">Data</string>
+    <string name="name_presets">Modelos prontos</string>
+    <string name="name_example">Exemplo: %1$s</string>
+    <string name="name_sample_title">Título do vídeo</string>
 </resources>
