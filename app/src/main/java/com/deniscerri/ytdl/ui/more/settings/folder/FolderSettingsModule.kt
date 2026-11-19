@@ -16,6 +16,7 @@ import com.deniscerri.ytdl.ui.more.settings.SettingHost
 import com.deniscerri.ytdl.ui.more.settings.SettingModule
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.TemporaryFilesUtil
+import com.deniscerri.ytdl.util.NameTemplates
 import com.deniscerri.ytdl.util.UiUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -272,15 +273,17 @@ object FolderSettingsModule: SettingModule {
             "file_name_template" -> {
                 pref.apply {
                     title = "${context.getString(R.string.file_name_template)} [${context.getString(R.string.video)}]"
-                    summary = preferences.getString(pref.key, "%(uploader).30B - %(title).170B")
+                    // YTindir: the template and, under it, the name it gives
+                    fun summaryOf(template: String) = "$template\n" + context.getString(R.string.name_example, NameTemplates.example(context, template, "mp4"))
+                    summary = summaryOf(preferences.getString(pref.key, NameTemplates.DEFAULT)!!)
 
                     setOnPreferenceClickListener {
-                        UiUtil.showFilenameTemplateDialog(host.getHostContext(),pref.summary.toString(), "${context.getString(
+                        UiUtil.showFilenameTemplateDialog(host.getHostContext(), preferences.getString(pref.key, NameTemplates.DEFAULT)!!, "${context.getString(
                             R.string.file_name_template)} [${context.getString(R.string.video)}]") {
                             preferences.edit(commit = true) {
                                 putString(pref.key, it)
                             }
-                            summary = it
+                            summary = summaryOf(it)
                             host.refreshUI()
                         }
                         false
@@ -290,15 +293,17 @@ object FolderSettingsModule: SettingModule {
             "file_name_template_audio" -> {
                 pref.apply {
                     title = "${context.getString(R.string.file_name_template)} [${context.getString(R.string.audio)}]"
-                    summary = preferences.getString(pref.key, "%(uploader).30B - %(title).170B")
+                    // YTindir: the template and, under it, the name it gives
+                    fun summaryOf(template: String) = "$template\n" + context.getString(R.string.name_example, NameTemplates.example(context, template, "m4a"))
+                    summary = summaryOf(preferences.getString(pref.key, NameTemplates.DEFAULT)!!)
 
                     setOnPreferenceClickListener {
-                        UiUtil.showFilenameTemplateDialog(host.getHostContext(), pref.summary.toString(), "${context.getString(
+                        UiUtil.showFilenameTemplateDialog(host.getHostContext(), preferences.getString(pref.key, NameTemplates.DEFAULT)!!, "${context.getString(
                             R.string.file_name_template)} [${context.getString(R.string.audio)}]") {
                             preferences.edit(commit = true) {
                                 putString(pref.key, it)
                             }
-                            summary = it
+                            summary = summaryOf(it)
                             host.refreshUI()
                         }
                         false

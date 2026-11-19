@@ -54,7 +54,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- YTindir: All formats opens the full list, Download (on the right) starts the download with the
+    <!-- YTindir: All options closes the list and shows the download card with all its settings, Download (on the right) starts the download with the
          marked choice. Explicit styles: the app's theme draws plain buttons as text buttons -->
     <LinearLayout
         android:id="@+id/quick_sheet_buttons"
@@ -76,8 +76,8 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="13sp"
-            android:text="@string/quick_all_formats"
-            app:icon="@drawable/ic_format_list"
+            android:text="@string/quick_all_options"
+            app:icon="@drawable/baseline_settings_suggest_24"
             app:iconSize="18dp"
             app:iconPadding="4dp" />
 

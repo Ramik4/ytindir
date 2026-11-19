@@ -698,4 +698,20 @@
     <string name="image_download_notes">• GIF diunduh sebagai file .gif (X, Pinterest, Reddit).\n• Jika sakelar aktif, video diunduh dengan suara dalam satu mp4. Postingan video Reddit selalu memberikan videonya.\n• Story Instagram, akun privat, dan beberapa situs memerlukan login: masuk di Lainnya → Cookie lalu aktifkan cookie.</string>
     <string name="image_include_videos">Unduh juga video dalam postingan</string>
     <string name="image_directory">Folder gambar</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">Unduh subtitle</string>
+    <string name="subs_download_summary">Mengunduh subtitle video bersama videonya</string>
+    <string name="subs_auto_translate">Terjemahan otomatis YouTube</string>
+    <string name="subs_auto_translate_summary">Jika suatu bahasa tidak punya subtitle sendiri, terjemahan otomatis YouTube (atau subtitle otomatisnya) yang diunduh</string>
+    <string name="subs_save_as">Simpan sebagai</string>
+    <string name="subs_save_embed">Di dalam video</string>
+    <string name="subs_save_file">File terpisah (.srt)</string>
+    <string name="subs_save_both">Keduanya</string>
+    <string name="subs_phone_language">%1$s (bahasa ponsel)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">Saluran</string>
+    <string name="name_part_date">Tanggal</string>
+    <string name="name_presets">Template siap pakai</string>
+    <string name="name_example">Contoh: %1$s</string>
+    <string name="name_sample_title">Judul video</string>
 </resources>

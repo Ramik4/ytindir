@@ -13,6 +13,7 @@ import com.afollestad.materialdialogs.utils.MDUtil.getStringArray
 import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.ui.more.settings.SettingModule
 import com.deniscerri.ytdl.ui.more.settings.SettingHost
+import com.deniscerri.ytdl.util.Subtitles
 import com.deniscerri.ytdl.util.UiUtil
 import kotlinx.coroutines.launch
 import kotlin.collections.indexOf
@@ -92,6 +93,22 @@ object ProcessingSettingsModule : SettingModule {
                                 putString(pref.key, it)
                             }
                             summary = it
+                            host.refreshUI()
+                        }
+                        true
+                    }
+                }
+            }
+            // YTindir: the subtitle languages by name, the phone's language when none were chosen
+            "subtitle_langs" -> {
+                pref.apply {
+                    summary = Subtitles.languageNames(context, Subtitles.languages(prefs))
+                    setOnPreferenceClickListener {
+                        UiUtil.showSubtitleLanguagesDialog(host.getHostContext(), listOf(), Subtitles.languages(prefs)){
+                            prefs.edit(commit = true) {
+                                putString(pref.key, it.trim())
+                            }
+                            summary = Subtitles.languageNames(context, Subtitles.languages(prefs))
                             host.refreshUI()
                         }
                         true

@@ -687,4 +687,20 @@
     <string name="image_download_notes">• GIF는 .gif 파일로 저장됩니다(X, Pinterest, Reddit).\n• 스위치를 켜면 동영상이 소리와 함께 하나의 mp4로 저장됩니다. Reddit 동영상 게시물은 항상 동영상을 저장합니다.\n• Instagram 스토리, 비공개 계정, 일부 사이트는 로그인이 필요합니다: 더보기 → 쿠키에서 로그인하고 쿠키를 켜세요.</string>
     <string name="image_include_videos">게시물의 동영상도 다운로드</string>
     <string name="image_directory">이미지 폴더</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">자막 다운로드</string>
+    <string name="subs_download_summary">동영상과 함께 자막을 다운로드합니다</string>
+    <string name="subs_auto_translate">YouTube 자동 번역</string>
+    <string name="subs_auto_translate_summary">해당 언어의 자막이 없으면 YouTube 자동 번역(또는 자동 생성 자막)을 다운로드합니다</string>
+    <string name="subs_save_as">저장 방식</string>
+    <string name="subs_save_embed">동영상에 포함</string>
+    <string name="subs_save_file">별도 파일 (.srt)</string>
+    <string name="subs_save_both">둘 다</string>
+    <string name="subs_phone_language">%1$s (휴대전화 언어)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">채널</string>
+    <string name="name_part_date">날짜</string>
+    <string name="name_presets">기본 템플릿</string>
+    <string name="name_example">예: %1$s</string>
+    <string name="name_sample_title">동영상 제목</string>
 </resources>

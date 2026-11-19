@@ -725,6 +725,7 @@
     <string name="quick_audio_only">Yalnızca ses</string>
     <string name="quick_thumbnail">Küçük resim</string>
     <string name="quick_thumbnail_downloading">Küçük resim indiriliyor</string>
+    <string name="quick_all_options">Tüm seçenekler</string>
     <string name="quick_all_formats">Tüm formatlar</string>
     <string name="quick_all_formats_summary">Bağlantının formatlarını dosya boyutlarıyla getirir</string>
     <string name="format_group_original">%1$s • Orijinal ses</string>
@@ -771,4 +772,20 @@
     <string name="image_download_notes">• GIF\'ler .gif dosyası olarak iner (X, Pinterest, Reddit).\n• Anahtar açıksa videolar sesiyle tek mp4 olarak iner. Reddit\'teki video gönderilerinde video her zaman iner.\n• Instagram hikâyeleri, gizli hesaplar ve bazı siteler giriş ister: Daha Fazla → Çerezler\'den giriş yapıp çerezleri aç.</string>
     <string name="image_include_videos">Gönderideki videoları da indir</string>
     <string name="image_directory">Görsel klasörü</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">Altyazıları indir</string>
+    <string name="subs_download_summary">Videonun altyazılarını videoyla birlikte indirir</string>
+    <string name="subs_auto_translate">YouTube otomatik çevirisi</string>
+    <string name="subs_auto_translate_summary">Bir dilin kendi altyazısı yoksa YouTube\'un otomatik çevirisi (ya da otomatik altyazısı) indirilir</string>
+    <string name="subs_save_as">Kaydetme şekli</string>
+    <string name="subs_save_embed">Videonun içinde</string>
+    <string name="subs_save_file">Ayrı dosya (.srt)</string>
+    <string name="subs_save_both">İkisi de</string>
+    <string name="subs_phone_language">%1$s (telefonun dili)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">Kanal</string>
+    <string name="name_part_date">Tarih</string>
+    <string name="name_presets">Hazır şablonlar</string>
+    <string name="name_example">Örnek: %1$s</string>
+    <string name="name_sample_title">Video başlığı</string>
 </resources>

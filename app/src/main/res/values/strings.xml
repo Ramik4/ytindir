@@ -735,6 +735,7 @@
     <string name="quick_audio_only">Audio only</string>
     <string name="quick_thumbnail">Thumbnail</string>
     <string name="quick_thumbnail_downloading">Downloading the thumbnail</string>
+    <string name="quick_all_options">All options</string>
     <string name="quick_all_formats">All formats</string>
     <string name="quick_all_formats_summary">Reads the formats of the link, with file sizes</string>
     <string name="format_group_original">%1$s • Original audio</string>
@@ -756,4 +757,20 @@
     <string name="image_download_notes">• GIFs come as .gif files (X, Pinterest, Reddit).\n• With the switch on, videos come with their sound as one mp4. A Reddit video post always gives its video.\n• Instagram stories, private accounts and some sites need a login: log in under More → Cookies and turn Cookies on.</string>
     <string name="image_include_videos">Also download the post\'s videos</string>
     <string name="image_directory">Image folder</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">Download subtitles</string>
+    <string name="subs_download_summary">Downloads the video\'s subtitles with it</string>
+    <string name="subs_auto_translate">YouTube auto-translation</string>
+    <string name="subs_auto_translate_summary">When a language has no subtitles of its own, YouTube\'s automatic translation (or its automatic subtitles) is downloaded</string>
+    <string name="subs_save_as">Save as</string>
+    <string name="subs_save_embed">In the video</string>
+    <string name="subs_save_file">Separate file (.srt)</string>
+    <string name="subs_save_both">Both</string>
+    <string name="subs_phone_language">%1$s (phone language)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">Channel</string>
+    <string name="name_part_date">Date</string>
+    <string name="name_presets">Ready-made templates</string>
+    <string name="name_example">Example: %1$s</string>
+    <string name="name_sample_title">Video title</string>
 </resources>

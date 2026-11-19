@@ -16,6 +16,7 @@ import com.deniscerri.ytdl.core.models.ExecuteException
 import com.deniscerri.ytdl.database.DBManager
 import com.deniscerri.ytdl.database.repository.ObserveSourcesRepository
 import com.deniscerri.ytdl.services.BgUtilsPoTokenGeneratorService
+import com.deniscerri.ytdl.util.NameTemplates
 import com.deniscerri.ytdl.util.ApkInstallUtil
 import com.deniscerri.ytdl.util.BgUtilsPoTokenGeneratorUtil
 import com.deniscerri.ytdl.util.Extensions.hasReachedEnd
@@ -166,6 +167,17 @@ class App : Application() {
                 .putBoolean("ytindir_media_defaults_v1", true)
                 .apply()
             sp.edit().putInt("spl", SPL).apply()
+        }
+
+        // YTindir: the title alone is the default file name now: the old "Channel - Title" default
+        // (never changed by the user) becomes it, once
+        if (!sp.getBoolean("title_name_default_v1", false)) {
+            sp.edit().apply {
+                listOf("file_name_template", "file_name_template_audio").forEach { key ->
+                    if (sp.getString(key, null) == NameTemplates.OLD_DEFAULT) putString(key, NameTemplates.DEFAULT)
+                }
+                putBoolean("title_name_default_v1", true)
+            }.apply()
         }
 
     }

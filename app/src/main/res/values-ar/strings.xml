@@ -702,4 +702,20 @@
     <string name="image_download_notes">• تُنزَّل صور GIF كملفات ‎.gif (X وPinterest وReddit).\n• عند تشغيل المفتاح تُنزَّل مقاطع الفيديو مع الصوت في ملف mp4 واحد. منشور الفيديو على Reddit يعطي الفيديو دائمًا.\n• قصص Instagram والحسابات الخاصة وبعض المواقع تتطلب تسجيل الدخول: سجّل الدخول من المزيد ← ملفات تعريف الارتباط وفعّلها.</string>
     <string name="image_include_videos">تنزيل مقاطع الفيديو في المنشور أيضًا</string>
     <string name="image_directory">مجلد الصور</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">تنزيل الترجمة</string>
+    <string name="subs_download_summary">ينزّل ترجمة الفيديو معه</string>
+    <string name="subs_auto_translate">الترجمة التلقائية من YouTube</string>
+    <string name="subs_auto_translate_summary">إذا لم تكن للغة ترجمة خاصة بها، تُنزَّل الترجمة التلقائية من YouTube (أو ترجمته المُنشأة تلقائيًا)</string>
+    <string name="subs_save_as">الحفظ</string>
+    <string name="subs_save_embed">داخل الفيديو</string>
+    <string name="subs_save_file">ملف منفصل (.srt)</string>
+    <string name="subs_save_both">كلاهما</string>
+    <string name="subs_phone_language">%1$s (لغة الهاتف)</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">القناة</string>
+    <string name="name_part_date">التاريخ</string>
+    <string name="name_presets">قوالب جاهزة</string>
+    <string name="name_example">مثال: %1$s</string>
+    <string name="name_sample_title">عنوان الفيديو</string>
 </resources>

@@ -64,9 +64,6 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
      */
     var itemProvider: (() -> DownloadItem?)? = null
 
-    /** opens the usual format list (every format, and reading them for a quick download) */
-    var onAllFormats: (() -> Unit)? = null
-
     // the row picked in this list ("v:1080", "a:mp3"), marked instead of the item's format: the card may
     // not have taken it yet, and a choice for the other tab is not on this tab's item
     private var markedRow: String? = null
@@ -104,13 +101,11 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
             formatViewModel.quickDownload.value = true
             dismiss()
         }
-        view.findViewById<View>(R.id.quick_sheet_all_formats).apply {
-            isVisible = onAllFormats != null
-            setOnClickListener {
-                val openAll = onAllFormats
-                dismiss()
-                openAll?.invoke()
-            }
+        // YTindir: All options: the list closes on the card under it, with all its settings; its format
+        // field then opens the full format list (not this list again)
+        view.findViewById<View>(R.id.quick_sheet_all_formats).setOnClickListener {
+            formatViewModel.quickListSkipped.value = true
+            dismiss()
         }
 
         // the list again whenever the card's item changed (and once now)

@@ -433,7 +433,8 @@ object RuntimeManager {
             )
         }
 
-        if (!usingCacheDir) {
+        // (YTindir: a request with its own cache folder keeps it)
+        if (!usingCacheDir && !request.hasOption("--cache-dir")) {
             request.addOption("--no-cache-dir")
         }
 

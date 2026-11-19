@@ -81,7 +81,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
         addOption("--compat-options", compatOptions.joinToString(","))
 
-        val socketTimeout = sharedPreferences.getString("socket_timeout", "5")!!.ifEmpty { "5" }
+        // YTindir: 15 seconds (was 5): on a slow network a request that stalled for 5 seconds was dropped and
+        // started again from nothing, so reading a link took longer or failed (yt-dlp's own default is 20)
+        val socketTimeout = sharedPreferences.getString("socket_timeout", "15")!!.ifEmpty { "15" }
         addOption("--socket-timeout", socketTimeout)
 
         if (sharedPreferences.getBoolean("force_ipv4", false)){
@@ -105,6 +107,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             addOption("--proxy", proxy)
         }
         addOption("-P", FileUtil.getCachePath(context) + "/tmp")
+        // YTindir: yt-dlp's cache, as the downloads use it: YouTube's player and its solved challenges are kept,
+        // so reading a link does not download the player (some MB) and solve it again every time, which
+        // took long, above all on a slow network
+        addOption("--cache-dir", FileUtil.getCacheYTDLPPath(context))
         // YTindir: our extractor plugins (Instagram stories) also read the post, not only download it
         addOption("--plugin-dirs", FileUtil.getBundledYTDLPPluginsPath(context))
 
@@ -1201,14 +1207,22 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
         // YTindir: aria2c is not shipped, yt-dlp always uses its own downloader
 
-        val concurrentFragments = sharedPreferences.getInt("concurrent_fragments", 1)
+        // YTindir: videos in pieces (HLS and DASH: YouTube's HLS formats, Instagram, X, TikTok, Twitch...)
+        // download 4 pieces at a time instead of one after the other, much faster above all on a slow or
+        // distant network (the setting is hidden, so at least 4)
+        val concurrentFragments = maxOf(sharedPreferences.getInt("concurrent_fragments", 1), DEFAULT_CONCURRENT_FRAGMENTS)
         if (concurrentFragments > 1) request.addOption("-N", concurrentFragments)
 
-        val retries = sharedPreferences.getString("retries", "")!!
-        val fragmentRetries = sharedPreferences.getString("fragment_retries", "")!!
+        // YTindir: a slow or patchy network (a few KB/s, drops) keeps downloading: a stalled connection is
+        // tried again up to 30 times (yt-dlp: 10), waiting a little longer each time (1, 2, 4... up to 20 s)
+        // for the network to come back, and the download goes on from where it stopped
+        val retries = sharedPreferences.getString("retries", "")!!.ifBlank { DEFAULT_RETRIES }
+        val fragmentRetries = sharedPreferences.getString("fragment_retries", "")!!.ifBlank { DEFAULT_RETRIES }
 
-        if(retries.isNotEmpty()) request.addOption("--retries", retries)
-        if(fragmentRetries.isNotEmpty()) request.addOption("--fragment-retries", fragmentRetries)
+        request.addOption("--retries", retries)
+        request.addOption("--fragment-retries", fragmentRetries)
+        request.addOption("--retry-sleep", "http:exp=1:20")
+        request.addOption("--retry-sleep", "fragment:exp=1:20")
 
         val limitRate = sharedPreferences.getString("limit_rate", "")!!
         if (limitRate.isNotBlank()) request.addOption("-r", limitRate)
@@ -1219,10 +1233,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             request.addOption("--no-resize-buffer")
         }
 
-        val socketTimeout = sharedPreferences.getString("socket_timeout", "")!!
-        if (socketTimeout.isNotBlank()) {
-            request.addOption("--socket-timeout", socketTimeout)
-        }
+        // YTindir: a connection is given up after 60 s without any data (yt-dlp: 20 s), so a very slow one
+        // that only pauses for a while is not cut
+        val socketTimeout = sharedPreferences.getString("socket_timeout", "")!!.ifBlank { DEFAULT_DOWNLOAD_SOCKET_TIMEOUT }
+        request.addOption("--socket-timeout", socketTimeout)
 
         if (sharedPreferences.getBoolean("restrict_filenames", true)) request.addOption("--restrict-filenames")
         if (sharedPreferences.getBoolean("force_ipv4", false)){
@@ -1603,29 +1617,43 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                     metadataCommands.add("--embed-metadata")
                 }
 
-                if (downloadItem.videoPreferences.writeSubs){
+                val videoPrefs = downloadItem.videoPreferences
+                val wantsSubs = videoPrefs.writeSubs || videoPrefs.writeAutoSubs
+                if (videoPrefs.writeSubs){
                     request.addOption("--write-subs")
                 }
 
-                if(downloadItem.videoPreferences.writeAutoSubs){
+                if(videoPrefs.writeAutoSubs){
                     request.addOption("--write-auto-subs")
                 }
 
-                if (downloadItem.videoPreferences.embedSubs) {
-                    if (sharedPreferences.getBoolean("no_keep_subs", false) && (downloadItem.videoPreferences.writeSubs || downloadItem.videoPreferences.writeAutoSubs)) {
+                if (videoPrefs.embedSubs) {
+                    // YTindir: the subtitle files stay next to the video only when asked for
+                    if (wantsSubs && !videoPrefs.keepSubFiles) {
                         request.addOption("--compat-options", "no-keep-subs")
                     }
 
                     request.addOption("--embed-subs")
                 }
 
-                if (downloadItem.videoPreferences.embedSubs || downloadItem.videoPreferences.writeSubs || downloadItem.videoPreferences.writeAutoSubs){
+                if (videoPrefs.embedSubs || wantsSubs){
                     val subFormat = sharedPreferences.getString("sub_format", "")
                     if(subFormat!!.isNotBlank()){
                         request.addOption("--sub-format", "${subFormat}/best")
                         request.addOption("--convert-subtitles", subFormat)
+                    } else if (wantsSubs && videoPrefs.keepSubFiles &&
+                        !(videoPrefs.embedSubs && downloadItem.container.equals("webm", ignoreCase = true))) {
+                        // YTindir: a kept file as .srt, which every player opens (webm embeds only WebVTT)
+                        request.addOption("--convert-subtitles", "srt")
                     }
-                    request.addOption("--sub-langs", downloadItem.videoPreferences.subsLanguages.ifEmpty { ".*-orig" })
+                    request.addOption("--sub-langs", videoPrefs.subsLanguages.ifEmpty { ".*-orig" })
+                }
+
+                // YTindir: a subtitle that can't be downloaded (YouTube often answers translations with
+                // 429 Too Many Requests) is only a warning then, the video still downloads; an error of
+                // the video itself still fails the download
+                if (wantsSubs) {
+                    request.addOption("--ignore-errors")
                 }
 
                 if (downloadItem.videoPreferences.burnSubs) {
@@ -2044,6 +2072,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
     }
 
     companion object {
+        const val DEFAULT_CONCURRENT_FRAGMENTS = 4
+        const val DEFAULT_RETRIES = "30"
+        const val DEFAULT_DOWNLOAD_SOCKET_TIMEOUT = "60"
         const val INSTAGRAM_APP_API_ARGS = "instagram:app_id=ios"
         const val INSTAGRAM_IOS_USER_AGENT = "Instagram 361.0.0.35.82 (iPhone14,5; iOS 17_6; en_US; en; " +
             "scale=3.00; 1170x2532; 674117118) AppleWebKit/420+"

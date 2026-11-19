@@ -1,5 +1,6 @@
 package com.deniscerri.ytdl.ui.downloadcard
 
+import com.deniscerri.ytdl.util.NameTemplates
 import com.deniscerri.ytdl.util.FloatingNavUtil
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -291,14 +292,14 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                 }
                 formatCard.setOnClickListener{
                     // YTindir: the list like YouTube's download menu (video qualities, audio only, thumbnail),
-                    // for YouTube links for now (unless turned off in the settings); other sites keep the full list
+                    // for YouTube links for now (unless turned off in the settings); other sites keep the full list,
+                    // and so does a card the user came to with All options in the quick list
                     val quickList = PreferenceManager.getDefaultSharedPreferences(requireContext())
                         .getBoolean("youtube_quick_format_list", true)
-                    if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL()) {
+                    if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL() && !formatViewModel.quickListSkipped.value) {
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
                                 itemProvider = { if (this@DownloadAudioFragment::downloadItem.isInitialized) downloadItem else null }
-                                onAllFormats = { showFormatSheet() }
                             }.show(parentFragmentManager, "quickFormatSheet")
                         }
                     } else {
@@ -458,7 +459,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                                     downloadItem.customFileNameTemplate = downloadItem.customFileNameTemplate.applyFilenameTemplateForCuts()
                                 }else{
                                     downloadItem.customFileNameTemplate = downloadViewModel.applySubdirectoryPreferences(
-                                        sharedPreferences.getString("file_name_template_audio", "%(uploader).30B - %(title).170B")!!
+                                        sharedPreferences.getString("file_name_template_audio", NameTemplates.DEFAULT)!!
                                     )
                                 }
 

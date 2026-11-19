@@ -36,6 +36,7 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -1506,116 +1507,90 @@ object UiUtil {
             adjustChapterDialog.show()
         }
 
+        // YTindir: subtitles, simply: on, YouTube's auto-translation, the languages and how they are saved
         val adjustSubtitles = view.findViewById<Chip>(R.id.adjust_subtitles)
         fun calculateAdjustSubtitlesChangeCount() {
-            if (items.size == 1) {
-                val firstItem = items.first()
-                val count = listOf(
-                    firstItem.videoPreferences.embedSubs,
-                    firstItem.videoPreferences.writeSubs,
-                    firstItem.videoPreferences.writeAutoSubs,
-                    firstItem.videoPreferences.burnSubs,
-                )
-                adjustSubtitles.createBadge(context, count.filter { it }.size)
-            }
+            adjustSubtitles.createBadge(context, if (items.all { Subtitles.isOn(it.videoPreferences) }) 1 else 0)
         }
         calculateAdjustSubtitlesChangeCount()
         adjustSubtitles.setOnClickListener {
-            val adjustSubtitleView = context.layoutInflater.inflate(R.layout.subtitle_download_preferences_dialog, null)
-            val embedSubs = adjustSubtitleView.findViewById<MaterialSwitch>(R.id.embed_subtitles)
-            val saveSubtitles = adjustSubtitleView.findViewById<MaterialSwitch>(R.id.save_subs)
-            val saveAutoSubtitles = adjustSubtitleView.findViewById<MaterialSwitch>(R.id.save_auto_subs)
-            val burnSubtitles = adjustSubtitleView.findViewById<MaterialSwitch>(R.id.burn_subs)
-            val subtitleLanguages = adjustSubtitleView.findViewById<ConstraintLayout>(R.id.subtitle_languages)
-            val subtitleLanguagesDescription = adjustSubtitleView.findViewById<TextView>(R.id.subtitle)
-            subtitleLanguagesDescription.text = items.first().videoPreferences.subsLanguages
-            subtitleLanguages.isClickable = embedSubs.isChecked || saveSubtitles.isChecked
+            val subsView = context.layoutInflater.inflate(R.layout.subtitle_simple_dialog, null)
+            val on = subsView.findViewById<MaterialSwitch>(R.id.subs_on)
+            val autoTranslate = subsView.findViewById<MaterialSwitch>(R.id.subs_auto_translate)
+            val autoTranslateSummary = subsView.findViewById<TextView>(R.id.subs_auto_translate_summary)
+            val languages = subsView.findViewById<View>(R.id.subs_languages)
+            val languagesValue = subsView.findViewById<TextView>(R.id.subs_languages_value)
+            val saveAsTitle = subsView.findViewById<TextView>(R.id.subs_save_as_title)
+            val saveAs = subsView.findViewById<RadioGroup>(R.id.subs_save_as)
 
-            embedSubs!!.isChecked = items.all { it.videoPreferences.embedSubs }
-            embedSubs.isEnabled = items.all { !it.videoPreferences.burnSubs }
-            embedSubs.setOnClickListener {
-                subtitleLanguages.isClickable = embedSubs.isChecked || saveSubtitles.isChecked
-                burnSubtitles.isEnabled = !embedSubs.isChecked && (saveSubtitles.isChecked || saveAutoSubtitles.isChecked)
-                embedSubsClicked(embedSubs.isChecked)
+            val first = items.first().videoPreferences
+            on.isChecked = items.all { Subtitles.isOn(it.videoPreferences) }
+            // (with them off, the rest shows the settings' choices, taken when they are turned on)
+            autoTranslate.isChecked = if (on.isChecked) first.writeAutoSubs
+                else sharedPreferences.getBoolean(Subtitles.PREF_AUTO_TRANSLATE, true)
+            var mode = if (on.isChecked) Subtitles.saveAs(first) else Subtitles.saveAs(sharedPreferences)
+            saveAs.check(when (mode) {
+                Subtitles.SAVE_FILE -> R.id.subs_save_file
+                Subtitles.SAVE_BOTH -> R.id.subs_save_both
+                else -> R.id.subs_save_embed
+            })
+            var langs = if (items.all { it.videoPreferences.subsLanguages == first.subsLanguages } && on.isChecked) {
+                first.subsLanguages
+            } else Subtitles.languages(sharedPreferences)
+            languagesValue.text = Subtitles.languageNames(context, langs)
 
-                items.forEach { it.videoPreferences.embedSubs = embedSubs.isChecked }
-                calculateAdjustSubtitlesChangeCount()
-            }
-
-            if (items.all { it.videoPreferences.writeSubs}) {
-                saveSubtitles.isChecked = true
-                subtitleLanguages.visibility = View.VISIBLE
-            }
-
-            if (items.all { it.videoPreferences.writeAutoSubs}) {
-                saveAutoSubtitles.isChecked = true
-                subtitleLanguages.visibility = View.VISIBLE
-            }
-
-            if (items.all { it.videoPreferences.burnSubs}) {
-                burnSubtitles.isChecked = true
-            }
-
-            saveSubtitles.setOnCheckedChangeListener { _, _ ->
-                subtitleLanguages.isClickable = embedSubs.isChecked || saveSubtitles.isChecked || saveAutoSubtitles.isChecked
-                saveSubtitlesClicked(saveSubtitles.isChecked)
-                items.forEach { it.videoPreferences.writeSubs = saveSubtitles.isChecked }
-
-                burnSubtitles.isEnabled = !embedSubs.isChecked && (saveSubtitles.isChecked || saveAutoSubtitles.isChecked)
-                if (!burnSubtitles.isEnabled) {
-                    burnSubtitles.isChecked = false
-                    burnSubtitlesClicked(burnSubtitles.isChecked)
-                    items.forEach { it.videoPreferences.burnSubs = burnSubtitles.isChecked }
+            fun apply() {
+                items.forEach {
+                    Subtitles.set(it.videoPreferences, on.isChecked, autoTranslate.isChecked, mode)
+                    it.videoPreferences.subsLanguages = langs
+                    it.videoPreferences.burnSubs = false
                 }
-
+                // (the tabs keep their own copy of these too)
+                embedSubsClicked(first.embedSubs)
+                saveSubtitlesClicked(first.writeSubs)
+                saveAutoSubtitlesClicked(first.writeAutoSubs)
+                subtitleLanguagesSet(langs)
                 calculateAdjustSubtitlesChangeCount()
             }
-
-            saveAutoSubtitles.setOnCheckedChangeListener { _, _ ->
-                subtitleLanguages.isClickable = embedSubs.isChecked || saveSubtitles.isChecked || saveAutoSubtitles.isChecked
-                saveAutoSubtitlesClicked(saveAutoSubtitles.isChecked)
-                items.forEach { it.videoPreferences.writeAutoSubs = saveAutoSubtitles.isChecked }
-
-                burnSubtitles.isEnabled = !embedSubs.isChecked && (saveSubtitles.isChecked || saveAutoSubtitles.isChecked)
-                if (!burnSubtitles.isEnabled) {
-                    burnSubtitles.isChecked = false
-                    burnSubtitlesClicked(burnSubtitles.isChecked)
-                    items.forEach { it.videoPreferences.burnSubs = burnSubtitles.isChecked }
+            fun updateEnabled() {
+                listOf(autoTranslate, autoTranslateSummary, languages, saveAsTitle).forEach { v ->
+                    v.isEnabled = on.isChecked
+                    v.alpha = if (on.isChecked) 1f else 0.5f
                 }
-
-                calculateAdjustSubtitlesChangeCount()
+                saveAs.alpha = if (on.isChecked) 1f else 0.5f
+                for (i in 0 until saveAs.childCount) saveAs.getChildAt(i).isEnabled = on.isChecked
             }
+            updateEnabled()
 
-            subtitleLanguages.isClickable = embedSubs.isChecked || saveSubtitles.isChecked
-            subtitleLanguages.setOnClickListener {
-                val currentSubtitleLang = if (items.size == 1 || items.all { it.videoPreferences.subsLanguages == items[0].videoPreferences.subsLanguages }){
-                    items[0].videoPreferences.subsLanguages
-                }else {
-                    ""
-                }.ifEmpty { sharedPreferences.getString("subs_lang", ".*-orig")!! }
-
-                val availabeSubtitles = if (items.size == 1) items[0].availableSubtitles else listOf()
-                showSubtitleLanguagesDialog(context, availabeSubtitles, currentSubtitleLang){
-                    subtitleLanguagesSet(it)
-                    subtitleLanguagesDescription.text = it
+            on.setOnCheckedChangeListener { _, _ ->
+                updateEnabled()
+                apply()
+            }
+            autoTranslate.setOnCheckedChangeListener { _, _ -> apply() }
+            saveAs.setOnCheckedChangeListener { _, id ->
+                mode = when (id) {
+                    R.id.subs_save_file -> Subtitles.SAVE_FILE
+                    R.id.subs_save_both -> Subtitles.SAVE_BOTH
+                    else -> Subtitles.SAVE_EMBED
+                }
+                apply()
+            }
+            languages.setOnClickListener {
+                if (!on.isChecked) return@setOnClickListener
+                val available = if (items.size == 1) items[0].availableSubtitles else listOf()
+                showSubtitleLanguagesDialog(context, available, langs) {
+                    langs = it.trim().ifBlank { Subtitles.languages(sharedPreferences) }
+                    languagesValue.text = Subtitles.languageNames(context, langs)
+                    apply()
                 }
             }
 
-            burnSubtitles.isEnabled = saveSubtitles.isChecked || saveAutoSubtitles.isChecked
-            burnSubtitles.setOnCheckedChangeListener { _, _ ->
-                burnSubtitlesClicked(burnSubtitles.isChecked)
-                embedSubs.isEnabled = !burnSubtitles.isChecked
-                items.forEach { it.videoPreferences.burnSubs = burnSubtitles.isChecked }
-                calculateAdjustSubtitlesChangeCount()
-            }
-
-            val adjustSubtitleDialog = MaterialAlertDialogBuilder(context)
+            MaterialAlertDialogBuilder(context)
                 .setTitle(context.getString(R.string.subtitles))
-                .setView(adjustSubtitleView)
+                .setView(subsView)
                 .setIcon(R.drawable.ic_subtitles)
                 .setNegativeButton(context.resources.getString(R.string.dismiss)) { _: DialogInterface?, _: Int -> }
-
-            adjustSubtitleDialog.show()
+                .show()
         }
 
         if (items.size == 1){
@@ -2406,7 +2381,7 @@ object UiUtil {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         val filenameTemplatePresets = setOf(
-            "%(uploader).30B - %(title).170B"
+            NameTemplates.DEFAULT
         )
 
         val myTemplates = preferences.getStringSet("filename_templates", filenameTemplatePresets)!!.toMutableSet()
@@ -2467,8 +2442,33 @@ object UiUtil {
             }
         }
 
+        // YTindir: the name the template gives, right away, and the ready-made templates by name
+        val exampleText = view.findViewById<TextView>(R.id.filename_example)
+        val exampleExtension = itemContext?.container?.takeIf { it.isNotBlank() && it != "Default" && it != context.getString(R.string.defaultValue) }
+            ?: if (itemContext?.type == DownloadType.audio) "m4a" else "mp4"
+        fun updateExample() {
+            val template = editText.text.toString()
+            exampleText.isVisible = template.isNotBlank()
+            exampleText.text = context.getString(R.string.name_example, NameTemplates.example(context, template, exampleExtension))
+        }
+        updateExample()
+        val presetChips = view.findViewById<ChipGroup>(R.id.filename_preset_chipgroup)
+        NameTemplates.presets(context).forEach { (label, template) ->
+            val chip = context.layoutInflater.inflate(R.layout.filter_chip, presetChips, false) as Chip
+            chip.text = label
+            chip.isChecked = editText.text.toString() == template
+            chip.setOnClickListener {
+                editText.setText(template)
+                editText.setSelection(editText.text.length)
+                chip.isChecked = true
+            }
+            presetChips.addView(chip)
+        }
+
         editText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateExample()
+                presetChips.children.forEach { c -> (c as Chip).isChecked = NameTemplates.presets(context).any { p -> p.first == c.text && p.second == s.toString() } }
                 previewTemplateText.isVisible = false
                 previewTemplateLoading.isVisible = false
                 previewTemplateBtn.isVisible = true

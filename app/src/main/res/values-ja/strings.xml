@@ -602,4 +602,20 @@
     <string name="image_download_notes">• GIF は .gif ファイルとして保存されます（X、Pinterest、Reddit）。\n• スイッチがオンなら、動画は音声付きの 1 つの mp4 になります。Reddit の動画投稿は常に動画を保存します。\n• Instagram のストーリー、非公開アカウント、一部のサイトはログインが必要です：その他 → Cookie でログインし、Cookie をオンにしてください。</string>
     <string name="image_include_videos">投稿の動画もダウンロード</string>
     <string name="image_directory">画像用フォルダ</string>
+    <!-- YTindir: subtitles -->
+    <string name="subs_download">字幕をダウンロード</string>
+    <string name="subs_download_summary">動画と一緒に字幕をダウンロードします</string>
+    <string name="subs_auto_translate">YouTube の自動翻訳</string>
+    <string name="subs_auto_translate_summary">その言語の字幕がない場合、YouTube の自動翻訳（または自動生成字幕）をダウンロードします</string>
+    <string name="subs_save_as">保存方法</string>
+    <string name="subs_save_embed">動画に埋め込む</string>
+    <string name="subs_save_file">別ファイル (.srt)</string>
+    <string name="subs_save_both">両方</string>
+    <string name="subs_phone_language">%1$s（端末の言語）</string>
+    <!-- YTindir: file name templates -->
+    <string name="name_part_channel">チャンネル</string>
+    <string name="name_part_date">日付</string>
+    <string name="name_presets">テンプレート</string>
+    <string name="name_example">例: %1$s</string>
+    <string name="name_sample_title">動画タイトル</string>
 </resources>
