@@ -1213,11 +1213,16 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         val concurrentFragments = maxOf(sharedPreferences.getInt("concurrent_fragments", 1), DEFAULT_CONCURRENT_FRAGMENTS)
         if (concurrentFragments > 1) request.addOption("-N", concurrentFragments)
 
-        val retries = sharedPreferences.getString("retries", "")!!
-        val fragmentRetries = sharedPreferences.getString("fragment_retries", "")!!
+        // YTindir: a slow or patchy network (a few KB/s, drops) keeps downloading: a stalled connection is
+        // tried again up to 30 times (yt-dlp: 10), waiting a little longer each time (1, 2, 4... up to 20 s)
+        // for the network to come back, and the download goes on from where it stopped
+        val retries = sharedPreferences.getString("retries", "")!!.ifBlank { DEFAULT_RETRIES }
+        val fragmentRetries = sharedPreferences.getString("fragment_retries", "")!!.ifBlank { DEFAULT_RETRIES }
 
-        if(retries.isNotEmpty()) request.addOption("--retries", retries)
-        if(fragmentRetries.isNotEmpty()) request.addOption("--fragment-retries", fragmentRetries)
+        request.addOption("--retries", retries)
+        request.addOption("--fragment-retries", fragmentRetries)
+        request.addOption("--retry-sleep", "http:exp=1:20")
+        request.addOption("--retry-sleep", "fragment:exp=1:20")
 
         val limitRate = sharedPreferences.getString("limit_rate", "")!!
         if (limitRate.isNotBlank()) request.addOption("-r", limitRate)
@@ -1228,10 +1233,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             request.addOption("--no-resize-buffer")
         }
 
-        val socketTimeout = sharedPreferences.getString("socket_timeout", "")!!
-        if (socketTimeout.isNotBlank()) {
-            request.addOption("--socket-timeout", socketTimeout)
-        }
+        // YTindir: a connection is given up after 60 s without any data (yt-dlp: 20 s), so a very slow one
+        // that only pauses for a while is not cut
+        val socketTimeout = sharedPreferences.getString("socket_timeout", "")!!.ifBlank { DEFAULT_DOWNLOAD_SOCKET_TIMEOUT }
+        request.addOption("--socket-timeout", socketTimeout)
 
         if (sharedPreferences.getBoolean("restrict_filenames", true)) request.addOption("--restrict-filenames")
         if (sharedPreferences.getBoolean("force_ipv4", false)){
@@ -2068,6 +2073,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
     companion object {
         const val DEFAULT_CONCURRENT_FRAGMENTS = 4
+        const val DEFAULT_RETRIES = "30"
+        const val DEFAULT_DOWNLOAD_SOCKET_TIMEOUT = "60"
         const val INSTAGRAM_APP_API_ARGS = "instagram:app_id=ios"
         const val INSTAGRAM_IOS_USER_AGENT = "Instagram 361.0.0.35.82 (iPhone14,5; iOS 17_6; en_US; en; " +
             "scale=3.00; 1170x2532; 674117118) AppleWebKit/420+"

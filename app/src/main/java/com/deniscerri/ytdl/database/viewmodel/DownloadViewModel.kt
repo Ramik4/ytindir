@@ -38,6 +38,7 @@ import com.deniscerri.ytdl.database.repository.DownloadRepository
 import com.deniscerri.ytdl.database.repository.HistoryRepository
 import com.deniscerri.ytdl.database.repository.ResultRepository
 import com.deniscerri.ytdl.ui.downloadcard.MultipleItemFormatTuple
+import com.deniscerri.ytdl.util.NameTemplates
 import com.deniscerri.ytdl.util.LocaleUtil
 import com.deniscerri.ytdl.util.Extensions.needsDataUpdating
 import com.deniscerri.ytdl.util.Extensions.toListString
@@ -273,8 +274,8 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
         if(type == DownloadType.command && commandTemplateDao.getTotalNumber() == 0) type = DownloadType.video
 
         var customFileNameTemplate = when(type) {
-            DownloadType.audio -> sharedPreferences.getString("file_name_template_audio", "%(uploader).30B - %(title).170B")!!
-            DownloadType.video -> sharedPreferences.getString("file_name_template", "%(uploader).30B - %(title).170B")!!
+            DownloadType.audio -> sharedPreferences.getString("file_name_template_audio", NameTemplates.DEFAULT)!!
+            DownloadType.video -> sharedPreferences.getString("file_name_template", NameTemplates.DEFAULT)!!
             else -> ""
         }
         customFileNameTemplate = applySubdirectoryPreferences(customFileNameTemplate)
@@ -470,8 +471,8 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
         val subsLanguages = sharedPreferences.getString("subs_lang", ".*-orig")!!
 
         var customFileNameTemplate = when(historyItem.type) {
-            DownloadType.audio -> sharedPreferences.getString("file_name_template_audio", "%(uploader).30B - %(title).170B")!!
-            DownloadType.video -> sharedPreferences.getString("file_name_template", "%(uploader).30B - %(title).170B")!!
+            DownloadType.audio -> sharedPreferences.getString("file_name_template_audio", NameTemplates.DEFAULT)!!
+            DownloadType.video -> sharedPreferences.getString("file_name_template", NameTemplates.DEFAULT)!!
             else -> ""
         }
         customFileNameTemplate = applySubdirectoryPreferences(customFileNameTemplate)

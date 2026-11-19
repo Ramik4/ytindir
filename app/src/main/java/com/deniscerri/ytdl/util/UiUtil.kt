@@ -1509,9 +1509,6 @@ object UiUtil {
 
         // YTindir: subtitles, simply: on, YouTube's auto-translation, the languages and how they are saved
         val adjustSubtitles = view.findViewById<Chip>(R.id.adjust_subtitles)
-        // (only with subtitles on in the settings, or on for this download)
-        adjustSubtitles.isVisible = sharedPreferences.getBoolean(Subtitles.PREF_DOWNLOAD, false) ||
-            items.any { Subtitles.isOn(it.videoPreferences) }
         fun calculateAdjustSubtitlesChangeCount() {
             adjustSubtitles.createBadge(context, if (items.all { Subtitles.isOn(it.videoPreferences) }) 1 else 0)
         }
@@ -2384,7 +2381,7 @@ object UiUtil {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         val filenameTemplatePresets = setOf(
-            "%(uploader).30B - %(title).170B"
+            NameTemplates.DEFAULT
         )
 
         val myTemplates = preferences.getStringSet("filename_templates", filenameTemplatePresets)!!.toMutableSet()

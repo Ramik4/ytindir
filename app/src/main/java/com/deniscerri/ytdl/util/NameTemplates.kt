@@ -13,7 +13,9 @@ import java.util.Locale
  */
 object NameTemplates {
 
-    const val DEFAULT = "%(uploader).30B - %(title).170B"
+    const val DEFAULT = "%(title)s"
+    /** the template of older versions, moved to [DEFAULT] once */
+    const val OLD_DEFAULT = "%(uploader).30B - %(title).170B"
     private const val DATE = "%(upload_date>%Y-%m-%d)s"
 
     /** The ready-made templates: their name and the template */
@@ -22,11 +24,11 @@ object NameTemplates {
         val title = context.getString(R.string.title)
         val date = context.getString(R.string.name_part_date)
         return listOf(
-            "$channel - $title" to DEFAULT,
-            title to "%(title).200B",
+            title to DEFAULT,
+            "$channel - $title" to OLD_DEFAULT,
             "$title [ID]" to "%(title).170B [%(id)s]",
-            "$date - $title" to "$DATE - %(title).170B",
-            "$channel - $date - $title" to "%(uploader).30B - $DATE - %(title).150B",
+            "$title - $channel" to "%(title).170B - %(uploader).30B",
+            "$title - $date" to "%(title).170B - $DATE",
         )
     }
 

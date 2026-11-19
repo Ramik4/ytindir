@@ -15,7 +15,7 @@
             android:paddingBottom="4dp"
             android:textAppearance="@style/YTindir.SectionLabel" />
 
-    <!-- YTindir: two rows: thumbnail, audio and subtitles (when on in the settings), then cut, crop and
+    <!-- YTindir: two rows: thumbnail, audio and subtitles (with a badge when on), then cut, crop and
          the file name template; the hidden chips show only when they apply -->
     <HorizontalScrollView
         android:layout_width="wrap_content"

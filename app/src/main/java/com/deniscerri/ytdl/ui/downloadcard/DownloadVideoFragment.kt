@@ -1,5 +1,6 @@
 package com.deniscerri.ytdl.ui.downloadcard
 
+import com.deniscerri.ytdl.util.NameTemplates
 import com.deniscerri.ytdl.util.FloatingNavUtil
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -502,7 +503,7 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                                 if (it.isNotBlank()){
                                     downloadItem.customFileNameTemplate = downloadItem.customFileNameTemplate.applyFilenameTemplateForCuts()
                                 }else{
-                                    downloadItem.customFileNameTemplate = downloadViewModel.applySubdirectoryPreferences(sharedPreferences.getString("file_name_template", "%(uploader).30B - %(title).170B")!!)
+                                    downloadItem.customFileNameTemplate = downloadViewModel.applySubdirectoryPreferences(sharedPreferences.getString("file_name_template", NameTemplates.DEFAULT)!!)
                                 }
                             },
                             mergeCutsChanged = { mergeCuts ->
