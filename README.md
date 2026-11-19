@@ -21,7 +21,7 @@ YTindir downloads audio and video from YouTube, Instagram, TikTok, Facebook, VK,
 | **YouTube** | 8K 60fps, 4K 60fps, 2K 60fps, 1080p FHD 60fps and other resolutions |
 | **Instagram** | 2K 60fps, 1080p FHD 60fps (posts, reels, stories) and other resolutions |
 | **TikTok** | 1080p FHD 60fps (in source quality) and other resolutions |
-| **X (Twitter)** | 2K 60fps, 1080p FHD 60fps and other resolutions |
+| **X (Twitter)** | 4K 60fps, 1080p FHD 60fps and other resolutions |
 | **Facebook** | 2K 60fps, 1080p FHD 60fps and other resolutions |
 | **VK** | 2K 60fps, 1080p FHD 60fps and other resolutions |
 | **Other sites** | The highest supported resolutions the site offers |
@@ -47,7 +47,7 @@ Download the APK from **[Releases](https://github.com/RAMiK4/ytindir/releases/la
 
 ## 🙏 Credits and license
 
-- **[Ramik ☆](https://github.com/RAMiK4)**: YTindir's development, design and extra features
+- **[Ramik4](https://github.com/RAMiK4)**: YTindir's development, design and extra features
 - **[YTDLnis](https://github.com/deniscerri/ytdlnis)** by Denis Çerri and contributors: YTindir is a modified version of this project
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** and **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
 
